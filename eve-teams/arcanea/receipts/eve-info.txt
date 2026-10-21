@@ -1,0 +1,5 @@
+# npx eve info, 2026-10-21T03:52:14Z
+
+☰eve  v0.39.3
+Failed to load AI Gateway model metadata for the primary compaction trigger model "anthropic/claude-opus-5". fetch failed
+exit=1
