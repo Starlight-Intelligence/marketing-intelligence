@@ -1,0 +1,8 @@
+# npx eve info, 2026-10-21T03:54:09Z
+
+☰eve  v0.39.3
+Failed to load AI Gateway model metadata for the primary compaction trigger model "anthropic/claude-opus-5". fetch failed
+exit=1
+
+# The gateway host is denied by this environment's network policy:
+curl: (56) CONNECT tunnel failed, response 403
