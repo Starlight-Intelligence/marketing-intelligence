@@ -1,5 +1,5 @@
 # Jackie Chan: How to Do Action Comedy
-- Creator: Every Frame a Painting (Taylor Ramos and Tony Zhou)
+- Creator: Every Frame a Painting (YouTube channel)
 - URL: https://nofilmschool.com/2014/12/jackie-chans-9-principles-action-comedy (coverage; the YouTube video itself was not opened)
 - Date opened: 2026-10-21
 - Format: Video essay on YouTube, posted December 2, 2014 per search summary. Opened via search result only; WebFetch was blocked this run.
