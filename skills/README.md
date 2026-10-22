@@ -10,8 +10,8 @@ npx skills add frankxai/marketing-intelligence
 
 | Skill | Status | What it does |
 |---|---|---|
-| [`launch-playbook`](launch-playbook/SKILL.md) | v0.1 | One product from "should this exist" to a launch-ready waitlist in seven stations |
-| [`chatgpt-ads`](chatgpt-ads/SKILL.md) | v0.1 | Plan, audit and measure ads inside ChatGPT, around conversation intents |
+| [`launch-playbook`](launch-playbook/SKILL.md) | v0.2 | One unlaunched product to a tested waitlist page and a staged 30-day plan, in seven gated stations |
+| [`chatgpt-ads`](chatgpt-ads/SKILL.md) | v0.2 | Decide whether to advertise inside ChatGPT, then draft the campaign worksheet and a test plan with a maximum loss |
 | `ai-search-visibility` | planned | Measure whether ChatGPT, Claude, Gemini and Perplexity cite you, and track it over time |
 | `google-ai-max` | planned | AI Max, Performance Max and ads in AI Overviews and AI Mode |
 | `meta-advantage-plus` | planned | Creative and measurement for Meta's automated campaigns |
