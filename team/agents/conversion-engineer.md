@@ -22,8 +22,8 @@ Run a synthetic end-to-end check with test data only:
 1. A test sign-up submits and is stored where the capture says.
 2. A duplicate and an invalid input are handled.
 3. Any welcome or gift email arrives, checked through a test inbox or mail sink, never by sending to a real person.
-5. The form endpoint down or slow shows the visitor an error, not a false success.
 4. The conversion event fires once with the right properties.
+5. The form endpoint down or slow shows the visitor an error, not a false success.
 
 Record each result in the brief's folder. A failed step blocks the page.
 

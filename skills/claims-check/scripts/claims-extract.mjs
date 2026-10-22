@@ -7,7 +7,7 @@
 import { readFileSync } from "node:fs";
 
 const RULES = [
-  ["number", /\b\d[\d,.]*\s*(%|percent|x\b|×|k\b|m\b|million|billion|users|customers|teams|companies|hours|minutes|days|weeks)|[$€£]\s?\d/i],
+  ["number", /\b\d[\d,.]*\s*(%|percent|x\b|×|k\b|m\b|million|billion|users|customers|clients|teams|companies|people|visitors|views|followers|subscribers|sign-?ups|stars|downloads|installs|clicks|members|hours|minutes|days|weeks|months)|\b\d[\d,.]*\s+(of|out of)\s+(them|our|the)\b|[$€£]\s?\d/i],
   ["superlative", /\b(best|only|first|fastest|cheapest|easiest|leading|#\s?1|number one|world'?s|most (popular|trusted|advanced)|unmatched|unbeatable)\b/i],
   ["comparison", /\b(faster|cheaper|better|easier|more \w+|less \w+)\s+than\b|\bvs\.?\b|\bcompared (to|with)\b/i],
   ["social-proof", /\b(trusted by|used by|loved by|join(ed)?\s+[\d,]+|customers?|reviews?|rated|testimonial|as seen (in|on)|featured in)\b/i],

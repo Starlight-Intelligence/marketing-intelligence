@@ -44,9 +44,13 @@ test("predictions: add, refuse duplicate, resolve, report", () => {
 
 test("claims-extract finds numbers, superlatives, social proof and scarcity", () => {
   const f = join(tmp(), "d.md");
-  writeFileSync(f, "Cut reporting time by 40%. Trusted by 2,000 agencies.\nThe only tool you need. Only 7 spots left!\nA calm sentence.");
-  const kinds = json(run(s("claims-check", "scripts", "claims-extract.mjs"), [f])).flatMap((c) => c.kinds);
+  writeFileSync(f, "Cut reporting time by 40%. Trusted by 2,000 agencies.\nThe only tool you need. Only 7 spots left!\nOur library had 546 visitors. 343 of them came from search.\nA calm sentence.");
+  const found = json(run(s("claims-check", "scripts", "claims-extract.mjs"), [f]));
+  const kinds = found.flatMap((c) => c.kinds);
   for (const k of ["number", "social-proof", "superlative", "scarcity"]) assert.ok(kinds.includes(k), k);
+  // Found while dogfooding on a LinkedIn draft: plain counts of people were missed.
+  assert.ok(found.some((c) => c.text.includes("546 visitors") && c.kinds.includes("number")));
+  assert.ok(found.some((c) => c.text.includes("343 of them") && c.kinds.includes("number")));
 });
 
 test("lint-style flags banned words and patterns, and fails closed on a missing list", () => {
