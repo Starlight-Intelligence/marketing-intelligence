@@ -9,8 +9,8 @@ Buyers now ask assistants before they search. Your job is to know what the assis
 
 ## Measure
 
-1. Keep a fixed panel of 20 to 40 buyer questions in `.marketing/memory/ai-panel.md`, taken from `market-intel`'s buyer language, never invented.
-2. Size the panel to the decision it serves: start with 10 questions, two assistants and three runs each, and grow only when a result changes a decision. For each assistant you can actually query (a tool the user has connected, or runs the user does and pastes in), record per question: date, assistant and mode (for example with or without web search), whether the brand is mentioned, whether it is cited with a link, which competitors appear, and which sources the answer cites.
+1. Keep a panel of buyer questions in `.marketing/memory/ai-panel.md`, taken from `market-intel`'s buyer language, never invented. Keep it fixed between sweeps so results compare.
+2. Size the panel to the decision it serves: start with 10 questions, two assistants and three runs each; grow toward 20 to 40 questions only when a result changes a decision. For each assistant you can actually query (a tool the user has connected, or runs the user does and pastes in), record per question: date, assistant and mode (for example with or without web search), whether the brand is mentioned, whether it is cited with a link, which competitors appear, and which sources the answer cites.
 3. Answers vary between runs. Repeat each question at least three times per assistant before calling a result, and report the share of runs, not a single answer.
 4. Store results in `.marketing/memory/ai-visibility.jsonl` so changes over time are visible. An assistant you cannot query is recorded as `not observed`, never estimated.
 

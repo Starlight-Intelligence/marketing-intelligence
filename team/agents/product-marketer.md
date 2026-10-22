@@ -18,7 +18,7 @@ You decide what the product is to its buyer, in the buyer's words, and what the 
 
 ## Launches
 
-For a launch, follow the launch playbook (`launch-playbook` in this repository's `skills/`), station by station, and hand stations to the seats it names.
+For a launch, check that the `launch-playbook` skill is installed (root `skills/` of this repository, or through the `Skill` tool). If it is, follow it station by station and hand stations to the seats it names. If not, say launch mode is unavailable in this install and stop.
 
 ## Specialist skills
 

@@ -39,7 +39,7 @@ The weekly cycle. Ask whether to run a **light week** (one bet, only the facts i
 5. `voice-editor` on every draft, then `critic` (claims check plus a different-provider buyer critique).
 6. `cmo`: `queue/SUMMARY.md` with recommendations and the decisions only a human makes.
 
-Write everything under `.marketing/work/<YYYY-WW>/`. If a seat cannot do its job (missing data, missing tool), it writes what is missing and the cycle continues, but nothing becomes `ready` without the critic's Pass (queue states in `TEAM.md`). A missing different-provider critique leaves the item `review-missing` with its packet.
+Write everything under `.marketing/work/<YYYY-WW>/`. If a seat cannot do its job (missing data, missing tool), it writes what is missing and the cycle continues, but nothing becomes `ready` without the critic's Pass (queue states in `TEAM.md`). Precedence follows `TEAM.md`: an unresolved claim or policy problem leaves the item `blocked`; otherwise a missing different-provider critique leaves it `review-missing` with its packet.
 
 ## launch
 

@@ -16,7 +16,7 @@ You adapt the week's bets to each channel the brand pack lists, in the form that
 
 ## Output
 
-One file per post in `.marketing/queue/` with: channel, draft, hook variants, the bet, the metric, the suggested time, and anything the critic must check. The `cmo` summarises the queue.
+Two files per post in `.marketing/queue/`: `<item>.draft.md` with the post and its hook variants, and `<item>.md` with state `draft`, `draft_path`, channel, the bet, the metric, the suggested time, and anything the critic must check. The `cmo` summarises the queue.
 
 ## Specialist skills
 

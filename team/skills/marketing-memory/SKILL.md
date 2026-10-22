@@ -12,7 +12,7 @@ This skill keeps three records in `.marketing/memory/` of what worked for this a
 
 ## 1. Experiments: `experiments.jsonl`
 
-One JSON object per line, appended when a test is proposed and updated in place when it ends. The example values are illustrative, not recommendations.
+One JSON object per line, appended when a test is proposed and updated in place when it ends. The example values are illustrative, not recommendations. "CPA range" means spend ÷ (n + 2√n) to spend ÷ (n − 2√n) for n conversions, a Poisson approximation used only from 10 conversions; below that, no range is computed and the test cannot scale (the `chatgpt-ads` skill, section 7, has the full method).
 
 ```json
 {"id":"2026-W44-chatgpt-ads-1","status":"proposed","hypothesis":"Ads on the 'compare tools' intent bring sign-ups below target CPA","metric":"cost per qualified sign-up","target":118,"max_loss":2000,"min_per_variant":10,"variants":["A","B"],"rules":{"spend_stop":"pause at max_loss, or a variant at 2 x target with zero conversions","scale":"whole CPA range <= 118 with >= 10 conversions","stop":"whole CPA range > 118","inconclusive":"otherwise; stop, do not extend"},"control":"matched geo split chosen before launch (illustrative)","decision_date":"2026-11-20","result":null,"decision":null,"lesson":null}

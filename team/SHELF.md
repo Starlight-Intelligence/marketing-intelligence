@@ -33,7 +33,7 @@ The team works without them; seats then rely on their own instructions.
 
 | Approach | Strength | What it leaves open |
 |---|---|---|
-| Marketing skill collections | Deep craft per task; a shared product context file (for example `.agents/product-marketing.md` in coreyhaines31/marketingskills, read 2026-10-22) | No pre-registered experiment record, no expiring platform-facts ledger, and drafting and judging run on the same model |
+| coreyhaines31/marketingskills (read 2026-10-22) | Deep craft per task; a shared `.agents/product-marketing.md` context file with a learnings section | We found no pre-registered experiment record, no expiring platform-facts ledger, and no hand-off of judging to a different model in it on that date |
 | Cloud marketing-team templates | A lead agent routing to specialists, approval steps, chat integration | Runs as a hosted service; brand memory and measurement are left to the operator |
 | C-suite advisor skills | Fast strategic framing | Advice without execution, data or gates |
-| This team | Runs in your agent on your keys, with the four records in `TEAM.md`, on top of the same context file | Depends on the data you give it and on a second provider's CLI for independent critique; no seat holds a tool that publishes, sends or spends |
+| This team | Runs in your agent on your keys, with the four records in `TEAM.md`, on top of the same context file | Depends on the data you give it and on a second provider's CLI for independent critique; seats get no connector tools, but three hold `Bash`; hard limits come from your own permission rules |

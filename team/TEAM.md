@@ -27,7 +27,8 @@ The team works from one folder in your project:
     experiments.jsonl      one line per test: hypothesis, rules, result, decision
     taste.jsonl            one line per human approve, reject or edit, with the reason
     outliers/              human work that beat its peers, and why
-  queue/                   drafts awaiting a human, one file each
+  queue/                   one item per draft awaiting a human: <item>.md (state and review record)
+                           and <item>.draft.md (the draft itself), plus SUMMARY.md and review packets
   work/<YYYY-WW>/          the week's briefs, drafts and reports
 ```
 
@@ -83,7 +84,7 @@ The team works from one folder in your project:
 
 ## Queue states
 
-Every file in `.marketing/queue/` carries one state:
+Every queue item record (`<item>.md`) carries one state, a `draft_path` pointing at its `<item>.draft.md`, and `draft_hash`, the full `git hash-object` of that draft file. Review packets, critiques and `SUMMARY.md` carry no state.
 
 | State | Meaning |
 |---|---|
@@ -93,11 +94,11 @@ Every file in `.marketing/queue/` carries one state:
 | `blocked` | Unsupported claim, policy problem or second failure |
 | `decided` | A human approved, edited or rejected it; the decision is in the taste ledger |
 
-Only `ready` items are presented as ready. If a draft changes after review, its hash changes and it drops back to `draft`.
+Precedence: `blocked` wins over everything (an unresolved claim or policy problem stays blocked whether or not a provider is available); then `review-missing`; `ready` only when nothing else applies. Only `ready` items are presented as ready. If the draft file changes after review, its hash no longer matches and the item drops back to `draft`. Writing the verdict into `<item>.md` does not change the draft's hash.
 
 ## What enforces the gates
 
-The gates above are instructions to the seats, backed by what each seat can reach. Every seat has an explicit tool list with no connector or MCP tools, so no seat can post, email, schedule or pay through an integration. `Bash` is held only by `critic` (to run another provider's CLI), `conversion-engineer` (to build and test a page on a branch) and `performance-analyst` (to compute from exports). For hard enforcement, add your own Claude Code permission rules, for example asking before `git push` and denying merges.
+The gates above are instructions to the seats. Tool lists narrow what each seat can reach: no seat is given connector or MCP tools, and `Bash` is held only by `critic` (to run another provider's CLI), `conversion-engineer` (to build and test a page on a branch) and `performance-analyst` (to compute from exports). That is not a sandbox: a seat with `Bash` can run anything your shell can, including network clients and logged-in CLIs, and `Write`/`Edit` are not limited to `.marketing/`. For hard enforcement, add your own Claude Code permission rules, for example asking before every `Bash` command from these seats, before `git push`, and denying merges and any posting CLI you have installed.
 
 ## Specialist skills
 
