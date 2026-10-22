@@ -112,7 +112,7 @@ Write this before any budget is approved, so the result cannot be argued afterwa
 - **Target CPA:** the affordable acquisition cost.
 - **Maximum loss:** the amount the advertiser accepts losing to learn. This caps total spend for the test.
 - **Learning question and minimum data.** Pick one question first.
-  - "Does this channel reach target CPA?" is answered with a **CPA range**, not a point. With *n* conversions, treat the true count as roughly *n* ± 2√*n* (a Poisson approximation, fair from about 10 conversions), so CPA lies between spend ÷ (*n* + 2√*n*) and spend ÷ (*n* − 2√*n*). Before launch, compute the range you would get if the test hit target CPA exactly within the maximum loss. If its upper end is far above target, the test can only be **directional**: say so up front, and decide whether a directional answer is worth the money.
+  - "Does this channel reach target CPA?" is answered with a **CPA range**, not a point. With *n* conversions, treat the true count as roughly *n* ± 2√*n* (a Poisson approximation, fair from about 10 conversions), so CPA lies between spend ÷ (*n* + 2√*n*) and spend ÷ (*n* − 2√*n*). Before launch, compute the range you would get if the test hit target CPA exactly within the maximum loss. If its upper end is far above target, or the maximum loss buys fewer than 10 conversions at target, the test can only be **directional** and can never be scale-eligible: say so up front, and decide whether a directional answer is worth the money.
   - "Which variant is better?" needs far more data: size it with a standard two-proportion power calculation and state the inputs. A small floor (for example 5 per variant) gives direction only.
   - If the budget cannot support the chosen question, cut variants and ad groups, or switch to the channel-level question. If even that is only directional and a directional answer is not worth the maximum loss, the verdict is **no test** or **learn small**.
 - **Window:** learning period plus the advertiser's conversion lag. No verdict before the window closes.
@@ -120,7 +120,12 @@ Write this before any budget is approved, so the result cannot be argued afterwa
 **Two kinds of rule, applied in this order:**
 
 1. **Spend stops** (during the test, protect money, not a verdict): pause a variant when its spend reaches 2 × target CPA with zero conversions; pause everything when total spend reaches the maximum loss. Pausing ends spending; the verdict still waits for lagged conversions to arrive.
-2. **Verdict** (after the window closes, on matured conversions, using the CPA range): **scale-eligible** if the whole range is at or below target; **stop** if the whole range is above target; otherwise **inconclusive**, reported with the point CPA as a directional estimate. Inconclusive is a valid result and not a reason to extend the budget.
+2. **Verdict** (after the window closes, on matured conversions), checked in this order:
+   - **Zero conversions:** **stop**.
+   - **Fewer than 10 conversions:** the range formula does not hold (at 4 or fewer, *n* − 2√*n* is zero or negative), so compute no range. If spend ÷ conversions is above 2 × target, **stop**; otherwise **inconclusive**, reported as a directional point CPA. Never scale on fewer than 10.
+   - **10 or more:** **scale-eligible** if the whole CPA range is at or below target; **stop** if the whole range is above target; otherwise **inconclusive**, reported with the point CPA as a directional estimate.
+
+   Inconclusive is a valid result and not a reason to extend the budget.
 
 Any budget beyond the maximum loss, including scaling a scale-eligible result, is a new decision for the approver.
 
