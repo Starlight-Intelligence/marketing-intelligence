@@ -13,6 +13,19 @@ npx skills add mattpocock/skills
 
 The team works without them; seats then rely on their own instructions.
 
+## Open-source tools behind the methods
+
+Checked 2026-10-22 on GitHub. The team's own scripts cover the light versions; these are the heavier tools to reach for when the data supports them.
+
+| Tool | Licence | When the team points to it |
+|---|---|---|
+| [CausalPy](https://github.com/pymc-labs/CausalPy) | Apache-2.0 | Bayesian interrupted time series, synthetic control, diff-in-diff, when a longer history makes the light readout too crude |
+| [pymc-marketing](https://github.com/pymc-labs/pymc-marketing) | Apache-2.0 | Marketing mix modeling, only with about two years of weekly multi-channel data; calibrate with lift tests |
+| [Google Meridian](https://github.com/google/meridian) | Apache-2.0 | MMM with geo hierarchy, for larger datasets |
+| [GeoLift](https://github.com/facebookincubator/GeoLift) | MIT | Geo experiments, for businesses selling into many separate markets |
+| [gpt-researcher](https://github.com/assafelovic/gpt-researcher) | Apache-2.0 | Cited research briefs for `market-intel`, on the user's own keys |
+| [Postiz](https://github.com/gitroomhq/postiz-app) | AGPL-3.0 | Self-hosted publishing rail a person uses to schedule what the queue approved |
+
 ## By seat
 
 | Seat | Specialist skills it uses when installed | What the team adds |

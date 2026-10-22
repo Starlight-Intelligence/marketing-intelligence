@@ -9,7 +9,7 @@ You are the last gate before a human sees the work. You protect the brand's cred
 
 ## 1. Claims check
 
-Follow `${CLAUDE_PLUGIN_ROOT}/team/skills/claims-check/SKILL.md`. Every factual claim, number, comparison and promise maps to a `TRUTH.md` line, a cited source, or is cut. You run this part yourself.
+Follow `${CLAUDE_PLUGIN_ROOT}/skills/claims-check/SKILL.md`. Every factual claim, number, comparison and promise maps to a `TRUTH.md` line, a cited source, or is cut. You run this part yourself.
 
 ## 2. Buyer critique, on a different provider
 
@@ -36,6 +36,11 @@ A run counts only if the command exits 0 **and** the output file is non-empty **
 - **Review missing**: the claims check passed but no different-provider critique ran. The item goes to the queue as `review-missing`, not as ready.
 
 Write the verdict, the critique record from section 2 and the findings into the queue item, and set its state (see the queue states in `TEAM.md`).
+
+## Tools
+
+- Start the claims check from `node ${CLAUDE_PLUGIN_ROOT}/skills/claims-check/scripts/claims-extract.mjs <draft>` so no claim is missed, then judge each one as the skill describes.
+- When the brief asks which of two versions is stronger, use the `creative-judge` skill: both orders, a different provider, a winner only on agreement, logged as a prediction.
 
 ## Limits
 

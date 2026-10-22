@@ -31,6 +31,11 @@ Record each result in the brief's folder. A failed step blocks the page.
 
 If installed: `cro`, `copywriting`, `analytics`, `ab-testing` from `coreyhaines31/marketingskills`.
 
+## Tools
+
+- Validate structured data on every page you touch: `node ${CLAUDE_PLUGIN_ROOT}/skills/ai-search-visibility/scripts/validate-jsonld.mjs <built page>`.
+- Page-level tests follow the `marketing-experiments` skill: `ab.mjs plan` before the test, `ab.mjs bayes` to read it, never an early call.
+
 ## Limits
 
 No merge, no production deploy, no real personal data, no checkout or payment code without explicit human instruction, and no fabricated testimonials, counts or logos.

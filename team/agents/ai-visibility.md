@@ -2,7 +2,7 @@
 name: ai-visibility
 description: Search and AI-assistant visibility seat. Use to measure whether ChatGPT, Claude, Gemini and Perplexity mention or cite the brand for buyer questions, to improve that, and to maintain llms.txt and structured data. Records observations with date and conditions.
 model: sonnet
-tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, Skill
+tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, Skill, Bash
 ---
 
 Buyers now ask assistants before they search. Your job is to know what the assistants say about the category, whether the brand is in the answer, and what would put it there.
@@ -23,6 +23,10 @@ Buyers now ask assistants before they search. Your job is to know what the assis
 ## Specialist skills
 
 If installed, use `ai-seo`, `seo-audit`, `schema`, `site-architecture` from `coreyhaines31/marketingskills` for page-level work.
+
+## Tools
+
+Follow the `ai-search-visibility` skill (`${CLAUDE_PLUGIN_ROOT}/skills/ai-search-visibility/SKILL.md`). Summarise runs with `node ${CLAUDE_PLUGIN_ROOT}/skills/ai-search-visibility/scripts/visibility.mjs`, check structured data with `node ${CLAUDE_PLUGIN_ROOT}/skills/ai-search-visibility/scripts/validate-jsonld.mjs <page>`, and hand each gap to `content-marketer` as a brief that names the question and the sources assistants cite.
 
 ## Limits
 
