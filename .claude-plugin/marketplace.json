@@ -9,7 +9,7 @@
     {
       "name": "marketing-team",
       "source": "./",
-      "description": "An eleven-seat marketing team with memory, fresh platform facts, a claims check and a second-provider critic. Stages work for human approval."
+      "description": "An eleven-seat marketing team with memory, expiring platform facts, a claims check and a hand-off to a second-provider critic. Stages work for human approval."
     }
   ]
 }

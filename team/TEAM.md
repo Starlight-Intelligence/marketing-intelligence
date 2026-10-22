@@ -2,7 +2,7 @@
 
 An eleven-seat marketing team that runs inside your own agent, on your own keys, against a memory that lives in your repo. It plans, researches, drafts, critiques and measures. People approve, publish, send, spend and set prices.
 
-Most marketing skills are good advice with no memory. This team keeps four records that compound, so week ten is better than week one:
+Good marketing skill collections already share a product context file between tasks. This team adds four records that compound, so week ten can be better than week one:
 
 | Record | What it holds | Why it matters |
 |---|---|---|
@@ -16,9 +16,11 @@ Most marketing skills are good advice with no memory. This team keeps four recor
 The team works from one folder in your project:
 
 ```
+.agents/
+  product-marketing.md     positioning context, shared with other marketing skills
 .marketing/
   TRUTH.md                 brand and product truth, provenance-tagged
-  product-marketing.md     positioning context (compatible with other marketing skills)
+  private/                 raw exports (tickets, analytics, sign-ups); git-ignored, never committed
   brands/<brand>.md        voice, visual rules, banned patterns, channels, budget line
   facts/<platform>.md      dated, sourced platform facts with an expiry
   memory/
@@ -29,7 +31,11 @@ The team works from one folder in your project:
   work/<YYYY-WW>/          the week's briefs, drafts and reports
 ```
 
+`.agents/product-marketing.md` is the file `coreyhaines31/marketingskills` and similar skills already read, so the team uses it instead of keeping a second copy. If it exists, setup imports it and never overwrites it.
+
 `marketing-team` sets it up. `marketing-memory`, `platform-facts` and `claims-check` maintain it.
+
+**Personal data.** Raw exports go in `.marketing/private/`, which setup adds to `.gitignore`. Everything committed (work files, memory, queue, review packets sent to another provider) holds aggregates and anonymised evidence references only: no names, emails, handles or quotes that identify a customer. Buyer-language quotes from public sources stay under 15 words with their source.
 
 ## The seats
 
@@ -60,18 +66,42 @@ The team works from one folder in your project:
 5. `voice-editor` then `critic` review every draft. Failures go back once; a second failure goes to the queue marked as such.
 6. `cmo` writes the queue summary: what is ready, the recommendation, and what only a human can decide.
 
-**Launch mode.** `marketing-team launch <product>` runs the seven-station launch playbook with these seats at each station.
+**Light week.** One bet, refresh only the facts that bet depends on, and skip seats it does not need. Use it until the full cycle has shown it pays for its review time.
+
+**Launch mode.** `marketing-team launch <product>` runs the seven-station `launch-playbook` skill with these seats at each station. It needs that skill installed (root `skills/` of this repository); without it, launch mode says it is unavailable and stops.
 
 **Always on.** Expired facts and unanswered `OPEN` items surface at the top of every cycle.
 
 ## Gates
 
 - **Stage, never send.** No seat posts, sends, schedules, publishes, spends, changes a price or handles payment details. Everything external goes to the queue.
-- **Maker is not the checker.** The `critic` runs on a different model provider from the maker (for example through the Codex or Gemini CLI). If none is available it writes a review packet and the critique is recorded as missing, never as done.
+- **Maker is not the checker.** The `critic` gets its buyer critique from a different model provider's CLI installed on your machine (for example Codex CLI), run read-only with a time limit. If none is installed, logged in and working, it writes a review packet and the critique is recorded as missing, never as done.
 - **No unsupported claims.** Every public claim maps to a line in `TRUTH.md` or a cited source. `claims-check` enforces it.
 - **No stale facts.** A platform fact past its expiry is re-fetched before use.
 - **Honest scarcity.** Founding windows that really close. No invented counts, resetting timers or undecided deadlines.
 - **Pre-registered tests.** Scale, hold and kill rules are written before a test starts, and the analyst applies them as written.
+
+## Queue states
+
+Every file in `.marketing/queue/` carries one state:
+
+| State | Meaning |
+|---|---|
+| `draft` | Made, not yet reviewed |
+| `review-missing` | Claims check passed; no different-provider critique ran. A review packet is attached. |
+| `ready` | Claims check passed and a different-provider critique ran successfully on this draft's current hash, with its objections answered |
+| `blocked` | Unsupported claim, policy problem or second failure |
+| `decided` | A human approved, edited or rejected it; the decision is in the taste ledger |
+
+Only `ready` items are presented as ready. If a draft changes after review, its hash changes and it drops back to `draft`.
+
+## What enforces the gates
+
+The gates above are instructions to the seats, backed by what each seat can reach. Every seat has an explicit tool list with no connector or MCP tools, so no seat can post, email, schedule or pay through an integration. `Bash` is held only by `critic` (to run another provider's CLI), `conversion-engineer` (to build and test a page on a branch) and `performance-analyst` (to compute from exports). For hard enforcement, add your own Claude Code permission rules, for example asking before `git push` and denying merges.
+
+## Specialist skills
+
+Seats call specialist skills through the `Skill` tool when they are installed (see `SHELF.md`). If a skill is not available, the seat says so once and works from its own instructions.
 
 ## Install
 
@@ -83,6 +113,6 @@ Claude Code:
 
 On Claude Code versions before 2.1.275, add the marketplace first with `/plugin marketplace add Starlight-Intelligence/marketing-intelligence`, then `/plugin install marketing-team@marketing-intelligence`.
 
-Other agents: copy `team/skills/` into your skills folder. Without subagents, `marketing-team` runs each seat's brief in sequence in one context.
+Other agents: copy the whole `team/` folder (this file, `SHELF.md`, `agents/` and `skills/`) into your project, plus the root `skills/` folder if you want launch mode and `chatgpt-ads`. Wherever a file says `${CLAUDE_PLUGIN_ROOT}`, read it as the folder that contains `team/`. Without subagents, `marketing-team` runs each seat's brief in sequence in one context.
 
 The team calls on proven specialist skills where they exist. `SHELF.md` lists them and how to install them.

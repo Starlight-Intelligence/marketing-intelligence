@@ -12,10 +12,10 @@ This skill keeps three records in `.marketing/memory/` of what worked for this a
 
 ## 1. Experiments: `experiments.jsonl`
 
-One JSON object per line, appended when a test is proposed and updated in place when it ends.
+One JSON object per line, appended when a test is proposed and updated in place when it ends. The example values are illustrative, not recommendations.
 
 ```json
-{"id":"2026-W44-chatgpt-ads-1","status":"proposed","hypothesis":"Ads on the 'compare tools' intent bring sign-ups below target CPA","metric":"cost per qualified sign-up","target":118,"max_loss":2000,"min_per_variant":10,"variants":["A","B"],"rules":{"scale":"CPA <= 118 with >= 10 conversions per variant","kill":"spend >= 1000 with CPA > 236","inconclusive":"fewer than 10 conversions per variant at decision date; stop, do not extend"},"control":"geo split, DE vs AT","decision_date":"2026-11-20","result":null,"decision":null,"lesson":null}
+{"id":"2026-W44-chatgpt-ads-1","status":"proposed","hypothesis":"Ads on the 'compare tools' intent bring sign-ups below target CPA","metric":"cost per qualified sign-up","target":118,"max_loss":2000,"min_per_variant":10,"variants":["A","B"],"rules":{"spend_stop":"pause at max_loss, or a variant at 2 x target with zero conversions","scale":"whole CPA range <= 118 with >= 10 conversions","stop":"whole CPA range > 118","inconclusive":"otherwise; stop, do not extend"},"control":"matched geo split chosen before launch (illustrative)","decision_date":"2026-11-20","result":null,"decision":null,"lesson":null}
 ```
 
 Rules:
@@ -24,6 +24,7 @@ Rules:
 - `status` moves `proposed` → `approved` (a human approved the maximum loss) → `running` → `decided`.
 - `lesson` is one sentence a future brief can use, with the evidence.
 - Report counts next to every rate.
+- No personal data: aggregates only. Raw exports stay in `.marketing/private/`.
 
 ## 2. Taste ledger: `taste.jsonl`
 

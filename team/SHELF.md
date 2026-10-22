@@ -1,6 +1,6 @@
 # Skill shelf
 
-The team does not rewrite what others already do well. Each seat calls on the strongest public skill for its craft when it is installed, and the team supplies what those skills lack: memory, fresh facts, a claims check, a second-provider critic and human gates.
+The team does not rewrite what others already do well. Each seat calls on the strongest public skill for its craft through the `Skill` tool when it is installed, and the team adds records those skills do not keep: pre-registered experiments with results, a taste ledger, expiring platform facts, a claims check, a hand-off to a different provider's critique when one is installed, and a queue for human decisions.
 
 Checked 2026-10-22. Install counts change; re-check on [skills.sh](https://skills.sh) before relying on them.
 
@@ -33,7 +33,7 @@ The team works without them; seats then rely on their own instructions.
 
 | Approach | Strength | What it leaves open |
 |---|---|---|
-| Marketing skill collections | Deep craft per task | Each run starts from zero: no memory of results, no record of platform facts, the same model drafts and judges |
+| Marketing skill collections | Deep craft per task; a shared product context file (for example `.agents/product-marketing.md` in coreyhaines31/marketingskills, read 2026-10-22) | No pre-registered experiment record, no expiring platform-facts ledger, and drafting and judging run on the same model |
 | Cloud marketing-team templates | A lead agent routing to specialists, approval steps, chat integration | Runs as a hosted service; brand memory and measurement are left to the operator |
 | C-suite advisor skills | Fast strategic framing | Advice without execution, data or gates |
-| This team | Runs in your agent on your keys, with the four records in `TEAM.md` | Depends on the data you connect; no seat can publish, send or spend |
+| This team | Runs in your agent on your keys, with the four records in `TEAM.md`, on top of the same context file | Depends on the data you give it and on a second provider's CLI for independent critique; no seat holds a tool that publishes, sends or spends |

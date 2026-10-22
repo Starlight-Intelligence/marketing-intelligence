@@ -2,7 +2,7 @@
   "name": "marketing-team",
   "displayName": "Starlight Marketing Team",
   "version": "0.1.0",
-  "description": "An eleven-seat marketing team that plans, researches, drafts, critiques on a second model provider, and learns from results, against a memory kept in your repo. People publish, send, spend and set prices.",
+  "description": "An eleven-seat marketing team that plans, researches, drafts, claims-checks and learns from results against a memory kept in your repo. Independent critique runs through a second provider's CLI when you have one installed; otherwise it is recorded as missing. People publish, send, spend and set prices.",
   "author": {
     "name": "Starlight Intelligence",
     "url": "https://github.com/Starlight-Intelligence"
