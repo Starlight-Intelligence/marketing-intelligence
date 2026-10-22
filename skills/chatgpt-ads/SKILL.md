@@ -8,7 +8,7 @@ metadata:
 
 # ChatGPT ads
 
-Ads in ChatGPT appear around an answer the user asked for. This skill decides whether a test is worth running, and if it is, produces a worksheet a person can enter into Ads Manager and a test plan whose stop rules were written before any money moved.
+Ads in ChatGPT appear around an answer the user asked for. This skill decides whether a test is worth running, and if it is, produces a campaign worksheet (validated, so a person can enter it into Ads Manager, or clearly marked as a draft with its gaps) and a test plan whose stop rules were written before any money moved.
 
 It never creates, funds or launches a campaign, and never enters payment details.
 
@@ -28,7 +28,12 @@ The platform is new and changes often. Fetch the current official pages (OpenAI'
 | Conversion tracking options and attribution windows | What can be measured |
 | Prohibited and restricted categories, and the conditions for restricted ones | Is the offer allowed |
 
-If a fact cannot be confirmed on an official page, write `[unverified]` beside it. If any fact in the first, second, third or last row is `[unverified]`, stop with a **blocked** result: the grounding table, what is missing, and who could confirm it (the advertiser's account rep, or the advertiser logging into Ads Manager). Never quote availability, prices, formats or audience numbers from memory.
+If a fact cannot be confirmed on an official page, write `[unverified]` beside it. Then:
+
+- Account countries, ad locations or policy `[unverified]`: stop with a **blocked** result: the grounding table, what is missing, and who could confirm it (the advertiser's account rep, or the advertiser logging into Ads Manager).
+- Any other row `[unverified]`: you may continue, but section 5 produces a **draft worksheet**, labelled as not ready to enter, with each unverified input listed. Only a worksheet whose every required input is verified is a **validated worksheet**.
+
+Never quote availability, prices, formats or audience numbers from memory.
 
 ## 2. Eligibility gate
 
@@ -66,13 +71,14 @@ If a companion visibility skill is installed (for example `ai-seo`), use its res
 
 Translate the intents into the structure Ads Manager actually uses, as documented on the read date. One row per ad group:
 
-| Business goal | Campaign (objective) | Ad group | Intent | Context hints or targeting settings, as documented | Creative fields per the current spec | Landing URL | Conversion event |
-|---|---|---|---|---|---|---|---|
+| Business goal | Campaign (objective) | Budget type and amount | Billing or bidding choice | Schedule | Ad group | Intent | Context hints or targeting settings, as documented | Creative fields per the current spec | Landing URL | Conversion event |
+|---|---|---|---|---|---|---|---|---|---|---|
 
 Rules:
 
 - Use only settings that appear in the grounding table. Where the platform treats context as a hint rather than an exact match, say so in the row.
-- Fill every required creative field and check each against the documented limits (characters, image size, file type). Mark any field you could not check.
+- Fill every input the documentation marks as required, and check each creative field against the documented limits (characters, image size, file type).
+- The worksheet is **validated** only if every required input is filled and verified. Otherwise title it **draft worksheet, not ready to enter** and list the missing or unverified inputs at the top.
 - Keep the structure as small as the budget allows (section 7 sets the number of ad groups and variants).
 - This is a worksheet for a person. Do not create campaign objects through any interface or API.
 
@@ -104,13 +110,20 @@ Write this before any budget is approved, so the result cannot be argued afterwa
 **Test plan, derived from the economics in section 3:**
 
 - **Target CPA:** the affordable acquisition cost.
-- **Maximum loss:** the amount the advertiser accepts losing to learn. This caps total spend.
-- **Minimum data:** conversions per variant before comparing variants. If maximum loss ÷ target CPA cannot buy at least that many conversions across all variants, cut variants and ad groups until it can, down to one ad group with two variants. If even that fails, the verdict is **no test** or **learn small** with a decision on intent-level signals only.
-- **Window:** learning period plus the advertiser's conversion lag before any call.
-- **Rules:** scale if CPA ≤ target with minimum data; kill if spend reaches 2 × target CPA per variant with zero conversions, or the maximum loss is reached; otherwise **inconclusive**, which is a valid result and not a reason to extend the budget.
+- **Maximum loss:** the amount the advertiser accepts losing to learn. This caps total spend for the test.
+- **Learning question and minimum data.** Pick one question first. "Does this channel reach target CPA?" needs conversions counted across the whole test. "Which variant is better?" needs conversions per variant, and far more of them: for a claim of a real difference, size it with a standard two-proportion power calculation and state the inputs. A small floor (for example 5 per variant) gives direction only; say so. If maximum loss ÷ target CPA cannot buy the minimum for the chosen question, cut variants and ad groups, or change the question to the channel-level one. If even that fails, the verdict is **no test** or **learn small**.
+- **Window:** learning period plus the advertiser's conversion lag. No verdict before the window closes.
+
+**Two kinds of rule, applied in this order:**
+
+1. **Spend stops** (during the test, protect money, not a verdict): pause a variant when its spend reaches 2 × target CPA with zero conversions; pause everything when total spend reaches the maximum loss. Pausing ends spending; the verdict still waits for lagged conversions to arrive.
+2. **Verdict** (after the window closes, on matured conversions): **scale-eligible** if CPA ≤ target with the minimum data met; **stop** if CPA is above target with the minimum data met; otherwise **inconclusive**, a valid result and not a reason to extend the budget.
+
+Any budget beyond the maximum loss, including scaling a scale-eligible result, is a new decision for the approver.
+
 - **Approver:** the named person who funds and launches.
 
-Example with labelled assumptions (not benchmarks): first order €600 at 70% margin is €420 of margin; the advertiser's rule is to spend at most a third of first-order margin, so target CPA is €140; a maximum loss of €2,100 buys about 15 conversions at target; at a minimum of 5 conversions per variant that supports three variants in one ad group, not twelve.
+Example with labelled assumptions (not benchmarks): first order €600 at 70% margin is €420 of margin; the advertiser's rule is to spend at most a third of first-order margin, so target CPA is €140; a maximum loss of €2,100 buys about 15 conversions at target. That answers the channel question (15 conversions across the test); it cannot rank twelve variants. If spend reaches €2,100 with 15 matured conversions, the spend stop pauses the test and the verdict is scale-eligible; more budget waits for the approver.
 
 ## Output
 
@@ -120,7 +133,7 @@ One document:
 2. Eligibility result, or the blocked or research handoff.
 3. Fit answers with evidence, and the verdict.
 4. Sourced question list, intents and ChatGPT observations.
-5. Campaign worksheet.
+5. Campaign worksheet, marked validated or draft.
 6. Creative and landing brief per ad group.
 7. Measurement checklist with pass or fail, and the pre-registered test plan.
 8. Open questions only a human can answer.

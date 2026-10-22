@@ -84,15 +84,17 @@ Build the waitlist page in the product's repo, on its own branch.
 - A short form: email first, then optional questions after they are in (expected price band, who they are, what they want to do). Price answers are stated preference, useful early evidence, and weaker than anyone actually paying.
 - Make it easy for AI assistants to cite: a clear answer block near the top, structured data, an `llms.txt` if the site has one.
 
+When the page works, do one pass whose only output is cuts and tightening. Then run the acceptance checks on that final revision.
+
 **Functional acceptance, with synthetic data only:**
 
 1. A test sign-up submits and is stored where the capture says it is.
 2. A duplicate email and an invalid email are handled with a clear message.
-3. The gift email (if any) arrives within the promised time.
+3. The gift email (if there is a gift) arrives within the promised time, checked through a test inbox or a mail sink you control.
 4. The sign-up event is recorded by the analytics the plan will read.
 5. The page works with the network slow or the form endpoint down: the visitor sees an error, not a silent success.
 
-Then do one pass whose only output is cuts and tightening.
+Any later material change to the page reruns the affected checks.
 
 Companions: `copywriting`, `cro`, `ai-seo`.
 Writes `05-door.md`: branch, preview link, the revision tested, the five acceptance results, and what the refinement pass removed.
@@ -104,7 +106,7 @@ The maker should not be the checker.
 
 1. Hand a different model or a different person a **review packet**: the page URL, the revision, the buyer from `02-brief.md`, the alternatives from `03-buyer.md`, and the instruction to review as a buyer who has already decided not to pay, reporting each finding with a severity.
 2. Fix what they find, or write down why you declined each point.
-3. If the fixes change the page materially, rerun station 5's acceptance checks on the new revision.
+3. If the fixes change the page materially, rerun the affected station 5 acceptance checks on the new revision and record it.
 4. Check the copy for filler, inflated claims and anything that reads machine-made.
 
 If no second reviewer is available, write the review packet, leave this station open and stop. Your own review can be recorded, labelled as the maker's, but it does not close the station.

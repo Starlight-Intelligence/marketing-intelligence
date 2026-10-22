@@ -3,15 +3,15 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Dry run of the launch playbook for Vowboard, a Notion template that runs a wedding planner's client pipeline. My answers: buyer is an independent wedding planner running 10 to 30 weddings a year; the job is keeping every couple's timeline, vendors and payments in one place; today they use a spreadsheet plus Aisle Planner or HoneyBook; why now: Notion became the default workspace for small studios this year; narrowest paid version is the client-pipeline board plus a vendor tracker. I'm in the session if you need more.",
-      "expected_output": "Creates a dated launch folder and runs stations 1 to 4 only. Station 1 writes a provisional go to investigate. Station 2 records the supplied answers and marks anything still missing as [OPEN]. Station 3 opens at least three named alternatives (for example Aisle Planner, HoneyBook and an existing wedding Notion template), each with URL, read date, observed facts kept separate from the proposed advantage, then confirms or reverses the station 1 decision. Station 4 writes product-marketing.md and 04-offer.md with a positioning line, a gift if it fits, an offer weighed against cost, and a price band marked as a hypothesis. Writes no page and nothing outside the launch folder.",
+      "prompt": "Dry run of the launch playbook for Vowboard, a Notion template that runs a wedding planner's client pipeline. My answers: buyer is an independent wedding planner running 10 to 30 weddings a year; the job is keeping every couple's timeline, vendors and payments in one place; today they use a spreadsheet plus Aisle Planner or HoneyBook; why now: Notion became the default workspace for small studios this year; narrowest paid version is the client-pipeline board plus a vendor tracker. I'm in the session if you need more. Vowboard exists: 40 planners have used the beta for three months and 12 said they would pay. The vendor-tracker page can be sent as a standalone gift. Delivery is a Notion duplicate link, so honouring a lifetime price lock costs nothing per buyer beyond lost future price rises.",
+      "expected_output": "Creates a dated launch folder and works through the dry run. Station 1 writes a provisional investigate. Station 2 records the supplied answers and marks anything still missing as [OPEN]. Station 3 opens at least three named alternatives, each with URL, read date, observed facts kept separate from the proposed advantage, then revisits the decision. If the decision stays go, station 4 writes product-marketing.md and 04-offer.md and the run stops. If research reverses it to pause or drop, the run stops after station 3 with that reason, which is also a correct result. Writes nothing outside the launch folder.",
       "expectations": [
-        "Writes exactly these files in the launch folder: 00-index.md, 01-decision.md, 02-brief.md, 03-buyer.md, product-marketing.md, 04-offer.md",
-        "01-decision.md records a provisional decision and 03-buyer.md or 00-index.md records the decision confirmed or changed after research",
+        "01-decision.md records a provisional decision and the revisited decision is recorded after station 3 with the evidence that decided it",
         "Uses the founder's supplied answers and invents no other founder answers",
-        "03-buyer.md lists at least three alternatives, each with URL and read date, and the agent's tool calls show each URL was fetched",
+        "03-buyer.md lists at least three alternatives, each with URL and read date, and the tool calls show each URL was fetched",
         "03-buyer.md separates observed competitor facts from proposed advantages",
-        "04-offer.md gives a price as a range labelled hypothesis",
+        "If the revisited decision is go: the folder holds exactly 00-index.md, 01-decision.md, 02-brief.md, 03-buyer.md, product-marketing.md and 04-offer.md, and 04-offer.md gives the price as a range labelled hypothesis",
+        "If the revisited decision is pause or drop: the run stops after station 3 and writes no product-marketing.md or 04-offer.md",
         "Creates no page, branch or file outside the launch folder"
       ],
       "files": []
@@ -53,13 +53,15 @@
     },
     {
       "id": 5,
-      "prompt": "Station 5 for Vowboard: the waitlist page is on the preview link and the screenshot looks great. Mark the door done and move to station 6.",
-      "expected_output": "Does not mark station 5 done from a screenshot. Requires a synthetic end-to-end check: a test sign-up submits, is stored where the capture says, a duplicate and an invalid email are handled, the gift email arrives, and the sign-up event is recorded. Records results in 05-door.md or lists them as blocking.",
+      "prompt": "Station 5 for Vowboard: the waitlist page is on the preview link and the screenshot looks great. The gift is the vendor-tracker page, emailed on sign-up through the capture's mail provider. Mark the door done and move to station 6.",
+      "expected_output": "Does not mark station 5 done from a screenshot. Runs or requires, on the final refined revision, a synthetic end-to-end check: a test sign-up submits and is stored, a duplicate and an invalid email are handled, the gift email arrives through a test inbox or mail sink, the sign-up event is recorded, and the endpoint-down path shows an error. Records results in 05-door.md or lists them as blocking.",
       "expectations": [
         "Refuses to mark the door done on visual evidence alone",
         "Requires a synthetic test submission and confirmation it was stored",
         "Requires duplicate and invalid-input handling to be checked",
-        "Requires the gift delivery and the sign-up tracking event to be confirmed",
+        "Requires the gift email to be confirmed through a test inbox or mail sink, and the sign-up tracking event to be recorded",
+        "Requires the endpoint-down path to show an error rather than a false success",
+        "Ties the results to the final revision after the refinement pass",
         "Uses synthetic data, not a real person's email"
       ],
       "files": []

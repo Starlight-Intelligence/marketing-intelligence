@@ -4,18 +4,18 @@
     {
       "id": 1,
       "prompt": "We sell Ledgerly, a bookkeeping tool for freelance designers, at $49/month, gross margin 80%, average customer stays 14 months. We are a US company selling in the US and Germany. Our payback rule: acquisition cost at most 3 months of margin. We can lose $2,000 to learn. Here are buyer questions from our support inbox and sales calls (sources in brackets): 'what's the easiest bookkeeping app for freelancers' [ticket 4411], 'do I need an accountant if I use QuickBooks' [call 2026-09-12], 'QuickBooks vs FreshBooks for a one-person studio' [ticket 4502], 'how do I track client expenses for tax' [ticket 4519], 'is bookkeeping software worth it under 50k revenue' [call 2026-09-30], 'best invoicing app that also does taxes in Germany' [ticket 4533]. Should we run ads in ChatGPT? Give me the plan.",
-      "expected_output": "Fetches official OpenAI pages and builds a grounding table (fact, URL, read date) covering account countries, ad locations, formats and creative specs, ad-group settings, bidding, tracking and policy. Runs the three-part eligibility gate for a US advertiser reaching US and German buyers, citing grounding rows. Answers fit with evidence and computes target CPA from the supplied economics ($39.20 margin per month x 3 = about $118). Groups the supplied questions into intents, keeping their sources, and records ChatGPT observations with date and conditions or marks them not observed. Produces a campaign worksheet with only documented settings, creative within documented limits, and a test plan whose variant count is derived from $2,000 / target CPA and a stated minimum conversions per variant, with scale, kill and inconclusive rules. States that a human launches and funds.",
+      "expected_output": "Fetches official OpenAI pages and builds a grounding table (fact, URL, read date). The outcome then depends on what the pages say. If eligibility is blocked or ineligible: returns that result with the grounding rows and a research handoff or a no, and no worksheet. If eligible: answers fit with evidence, computes target CPA from the supplied economics ($49 x 80% x 3 = $117.60), groups the supplied questions into intents with their sources, records ChatGPT observations or marks them not observed, produces a worksheet marked validated or draft with its gaps, and a test plan sized from the $2,000 maximum loss with spend stops applied before the verdict. States that a human launches and funds.",
       "expectations": [
         "Calls a web fetch or search tool against an official OpenAI domain before stating any platform fact",
         "Includes a grounding table where each platform fact has a source URL and a read date",
-        "Reports an explicit yes, no or unknown for advertiser-account eligibility, buyer-market eligibility and policy eligibility",
-        "Computes a target CPA from the supplied margin and payback rule rather than inventing one",
-        "Keeps the bracketed source next to each buyer question it uses and adds no unsourced questions",
-        "Records ChatGPT observations with date and conditions, or marks them not observed and names the proxy used",
-        "Includes a campaign worksheet with campaign, ad group, intent, settings, creative fields, landing URL and conversion event columns",
-        "Derives the number of variants from the $2,000 maximum loss, the target CPA and a stated minimum conversions per variant",
-        "Includes scale, kill and inconclusive rules written before launch",
-        "Separates platform-attributed conversions from incremental lift and names the control needed for lift",
+        "Reports yes, no or unknown for advertiser-account, buyer-market and policy eligibility, each tied to a grounding row",
+        "If any eligibility check is no or unknown: stops with a blocked, research or no result and produces no campaign worksheet",
+        "If eligible: computes a target CPA of about $117.60 from the supplied margin and payback rule",
+        "If eligible: keeps the bracketed source next to each buyer question used and adds no unsourced questions",
+        "If eligible: records ChatGPT observations with date and conditions, or marks them not observed and names the proxy",
+        "If eligible: labels the worksheet validated only when every required input is verified, otherwise draft with the gaps listed",
+        "If eligible: sizes the test from the $2,000 maximum loss and the target CPA, states the learning question, and orders spend stops before the verdict",
+        "Separates platform-attributed conversions from incremental lift",
         "States that a human creates, funds and launches the campaign"
       ],
       "files": []
@@ -35,10 +35,10 @@
     {
       "id": 3,
       "prompt": "When I ask ChatGPT 'best project management tool for a 10-person agency' it already recommends our app, Brieflow. Should we still buy ChatGPT ads for that question?",
-      "expected_output": "Treats the user's single observation as an anecdote and asks for or runs repeated observations with recorded conditions. Explains that being recommended organically means ads on that intent would at best defend share, so the case rests on incremental lift, which needs a comparable control such as a geo split. Suggests researching intents where Brieflow is not named, without treating absence alone as a reason to spend.",
+      "expected_output": "Treats the user's single observation as an anecdote and asks for or runs repeated observations with recorded conditions. Frames the question as competing hypotheses: ads on an intent where Brieflow is already recommended may cannibalise organic clicks, or may reach different users or lift conversion. Only incremental lift measured against a comparable control can decide. Suggests researching intents where Brieflow is not named, without treating absence alone as a reason to spend.",
       "expectations": [
         "Does not treat one ChatGPT answer as stable evidence and asks for repeated observations with conditions recorded",
-        "States that spend on an intent where the brand is already recommended must be justified by incremental lift",
+        "Presents cannibalisation and additional reach or conversion as competing hypotheses without asserting either result",
         "Names a comparable control (geo split, matched on/off periods or a documented platform lift test) and says a before/after period alone is not a control",
         "Suggests examining intents where the brand is not named, framed as research rather than an automatic spend case"
       ],
@@ -58,11 +58,12 @@
     {
       "id": 5,
       "prompt": "We sell a $30 one-off course, margin 90%, target CPA $25, and can lose $250 testing ChatGPT ads. We want 6 intents with 3 creative variants each. Set up the test plan.",
-      "expected_output": "Computes that $250 buys about 10 conversions at target and that 18 variants cannot each reach a minimum sample. Cuts the structure to one ad group with two variants at most, or recommends learn small or no test. Writes kill and inconclusive rules.",
+      "expected_output": "Computes that $250 buys about 10 conversions at target, so 18 variants cannot be compared. Changes the learning question to the channel-level one (does ChatGPT reach a $25 CPA) with one ad group and at most two variants, or recommends learn small or no test. Writes spend stops and a verdict with an inconclusive outcome.",
       "expectations": [
         "Computes roughly 10 conversions from $250 at a $25 target CPA",
-        "States that 6 intents x 3 variants is too many for the budget and reduces to at most one ad group with two variants, or recommends learn small or no test",
-        "Includes a kill rule and an inconclusive outcome that does not extend the budget"
+        "States that 6 intents x 3 variants cannot be compared on this budget",
+        "Reduces to a channel-level question with one ad group and at most two variants, or recommends learn small or no test",
+        "Separates spend stops during the test from the verdict after the window, and includes an inconclusive outcome that does not extend the budget"
       ],
       "files": []
     }
