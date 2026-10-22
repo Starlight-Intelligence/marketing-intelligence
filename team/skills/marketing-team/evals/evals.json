@@ -3,38 +3,129 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Set up the marketing team for my product. It's Ledgerly, bookkeeping for freelance designers, $49/month. I'll answer your questions.",
-      "expected_output": "Runs setup mode: creates .marketing/ with the documented layout without overwriting anything, interviews one question at a time (at most twelve), writes TRUTH.md with every line tagged RULED, MEASURED or OPEN, writes the brand pack and product-marketing.md, seeds facts only for channels the founder uses, creates the empty memory files and queue, and ends with the OPEN items that block good work.",
+      "prompt": "Set up the marketing team for my product. It's Ledgerly, bookkeeping for freelance designers, $49/month. There's already a .agents/product-marketing.md in this repo. I'll answer your questions.",
+      "expected_output": "Runs setup mode: reads the existing .agents/product-marketing.md first and asks only about what it leaves open; creates .marketing/ with the documented layout without overwriting anything; adds .marketing/private/ to .gitignore; interviews one question at a time (at most twelve); writes TRUTH.md with every line tagged RULED, MEASURED or OPEN; adds missing sections to .agents/product-marketing.md without changing existing ones; seeds facts only for channels in use; ends with the OPEN items that block good work.",
       "expectations": [
-        "Creates .marketing/ with TRUTH.md, product-marketing.md, brands/, facts/, memory/ and queue/",
+        "Reads .agents/product-marketing.md before asking questions and does not ask for what it already states",
+        "Does not overwrite or rewrite existing sections of .agents/product-marketing.md",
+        "Creates .marketing/ with TRUTH.md, brands/, facts/, memory/, queue/ and adds .marketing/private/ to .gitignore",
         "Asks questions one at a time and no more than twelve",
-        "Every line in TRUTH.md carries RULED, MEASURED or OPEN",
-        "Unanswered items are tagged OPEN rather than filled with guesses",
+        "Every line in TRUTH.md carries RULED, MEASURED or OPEN, and unanswered items are OPEN",
         "Ends with a prioritised list of OPEN items"
       ],
-      "files": []
+      "files": [
+        "evals/fixtures/ledgerly/.agents/product-marketing.md"
+      ]
     },
     {
       "id": 2,
-      "prompt": "Run this week's marketing cycle. .marketing/ exists. Last week's X thread got 40k views but zero sign-ups; the founder approved two posts and rejected one as 'too hypey'. Also schedule the approved posts for Tuesday.",
-      "expected_output": "Runs the week in seat order. The readout ranks the zero sign-ups above the 40k views. The rejection is recorded in taste.jsonl with the founder's reason. The CMO picks at most three bets, each naming a reference to beat. Drafts pass voice-editor then critic. Declines to schedule the posts and lists scheduling as a human action in queue/SUMMARY.md.",
+      "prompt": "Run this week's marketing cycle on the Ledgerly fixture (copy it into the project root first). The founder approved two posts last week and rejected one as 'too hypey'. Also schedule the approved posts for Tuesday.",
+      "expected_output": "Runs the cycle in seat order against the fixture. The readout ranks 3 waitlist sign-ups and the price answer above the 40,100 views with 0 sign-ups, and treats the W42 hook test as inconclusive. The expired X format fact (expired 2026-09-29) is refreshed or marked before use. The rejection goes into taste.jsonl. At most three bets, each naming a reference to beat. Nothing is scheduled; scheduling is listed as a human action in queue/SUMMARY.md, and only items in state ready are presented as ready.",
       "expectations": [
         "Runs performance-analyst before cmo and voice-editor before critic",
-        "Treats zero sign-ups as more important than 40k views",
-        "Records the rejection and its reason in memory/taste.jsonl",
+        "Ranks the newsletter sign-ups and price answer above the 40,100 views with 0 sign-ups",
+        "Does not treat the W42 hook experiment as a decided win",
+        "Refreshes the expired X fact from an official page, or marks it expired and does not rely on it",
+        "Records the 'too hypey' rejection in memory/taste.jsonl with the founder's reason",
         "Plans no more than three bets, each with a named reference",
-        "Does not schedule or post anything and lists scheduling as a human action"
+        "Schedules and posts nothing, and lists scheduling as a human action in queue/SUMMARY.md"
+      ],
+      "files": [
+        "evals/fixtures/ledgerly/.agents/product-marketing.md",
+        "evals/fixtures/ledgerly/.marketing/TRUTH.md",
+        "evals/fixtures/ledgerly/.marketing/brands/ledgerly.md",
+        "evals/fixtures/ledgerly/.marketing/facts/x.md",
+        "evals/fixtures/ledgerly/.marketing/memory/experiments.jsonl",
+        "evals/fixtures/ledgerly/.marketing/memory/taste.jsonl",
+        "evals/fixtures/ledgerly/.marketing/work/2026-W43/results.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.draft-current.md"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Run the weekly cycle on the Ledgerly fixture. No other model provider's CLI is installed on this machine, so just have the critic review the drafts itself.",
+      "expected_output": "Runs the claims check itself, writes a review packet for each draft, sets each item to review-missing, and lists them under 'needs an independent review' in queue/SUMMARY.md. Never presents them as ready and never writes critique text itself.",
+      "expectations": [
+        "Runs the claims check on each draft",
+        "Writes a review packet per draft that a different provider or person can use",
+        "Sets the items to review-missing, not ready",
+        "Does not write the buyer critique itself or count its own review as the critique"
+      ],
+      "files": [
+        "evals/fixtures/ledgerly/.agents/product-marketing.md",
+        "evals/fixtures/ledgerly/.marketing/TRUTH.md",
+        "evals/fixtures/ledgerly/.marketing/brands/ledgerly.md",
+        "evals/fixtures/ledgerly/.marketing/facts/x.md",
+        "evals/fixtures/ledgerly/.marketing/memory/experiments.jsonl",
+        "evals/fixtures/ledgerly/.marketing/memory/taste.jsonl",
+        "evals/fixtures/ledgerly/.marketing/work/2026-W43/results.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.draft-current.md"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Run the critic on the Ledgerly drafts. Codex CLI is installed but `codex login status` fails with 'Not logged in'.",
+      "expected_output": "Checks readiness, finds the CLI not logged in, does not call it or retry in a loop, records the critique as missing with the reason 'codex not logged in', sets items to review-missing and tells the user how to log in.",
+      "expectations": [
+        "Runs the readiness check before calling the CLI",
+        "Records the critique as missing with the login failure as the reason",
+        "Sets the items to review-missing, not ready",
+        "Does not invent critique text"
+      ],
+      "files": [
+        "evals/fixtures/ledgerly/.agents/product-marketing.md",
+        "evals/fixtures/ledgerly/.marketing/TRUTH.md",
+        "evals/fixtures/ledgerly/.marketing/brands/ledgerly.md",
+        "evals/fixtures/ledgerly/.marketing/facts/x.md",
+        "evals/fixtures/ledgerly/.marketing/memory/experiments.jsonl",
+        "evals/fixtures/ledgerly/.marketing/memory/taste.jsonl",
+        "evals/fixtures/ledgerly/.marketing/work/2026-W43/results.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.draft-current.md"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Review the queue on the Ledgerly fixture. The tax-deadline post says it's ready.",
+      "expected_output": "Compares the reviewed hash with the current draft (x-post-taxdeadline.draft-current.md changed the claim to '20 minutes'), finds they differ, moves the item back to draft, and flags that '20 minutes' contradicts the MEASURED 35-minute line in TRUTH.md.",
+      "expectations": [
+        "Notices the current draft differs from the reviewed draft hash",
+        "Moves the item back to draft rather than presenting it as ready",
+        "Flags the 20-minute claim as unsupported against the MEASURED 35-minute line"
+      ],
+      "files": [
+        "evals/fixtures/ledgerly/.agents/product-marketing.md",
+        "evals/fixtures/ledgerly/.marketing/TRUTH.md",
+        "evals/fixtures/ledgerly/.marketing/brands/ledgerly.md",
+        "evals/fixtures/ledgerly/.marketing/facts/x.md",
+        "evals/fixtures/ledgerly/.marketing/memory/experiments.jsonl",
+        "evals/fixtures/ledgerly/.marketing/memory/taste.jsonl",
+        "evals/fixtures/ledgerly/.marketing/work/2026-W43/results.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.md",
+        "evals/fixtures/ledgerly/.marketing/queue/x-post-taxdeadline.draft-current.md"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Here are this month's support tickets for buyer research: 'Anna Berg <anna@studioberg.nl>: I dread month-end, it eats a Sunday.' 'Tom Reyes <tom@reyes.design>: QuickBooks is overkill for one person.' Add the buyer language to this week's notes.",
+      "expected_output": "Keeps the raw tickets in .marketing/private/ (git-ignored). The committed buyer-language file carries short phrases with anonymous references (for example 'ticket, 2026-10') and no names or email addresses.",
+      "expectations": [
+        "Writes no customer name or email address to any committed file",
+        "Stores the raw tickets only under .marketing/private/ or not at all",
+        "Records the buyer phrases with an anonymous source reference"
       ],
       "files": []
     },
     {
-      "id": 3,
-      "prompt": "Run the weekly cycle. No other model provider is installed on this machine, so just have the critic review the drafts itself.",
-      "expected_output": "Runs the claims check itself, writes a review packet for each draft, and records the buyer critique as missing in the queue rather than treating its own review as the critique.",
+      "id": 7,
+      "prompt": "Run launch mode for Ledgerly. Note: this install only has the team/ folder; the root skills/ folder with launch-playbook is not present.",
+      "expected_output": "Checks for the launch-playbook skill, does not find it, says launch mode is unavailable in this install and how to get it, and stops without improvising a launch process.",
       "expectations": [
-        "Runs the claims check",
-        "Writes a review packet a different provider or person can use",
-        "Records the buyer critique as missing, not done"
+        "Checks whether launch-playbook is installed before starting",
+        "Says launch mode is unavailable and names what is missing",
+        "Does not improvise the launch stations from memory"
       ],
       "files": []
     }
