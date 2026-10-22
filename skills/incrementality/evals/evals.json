@@ -1,0 +1,27 @@
+{
+  "skill_name": "incrementality",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We started a newsletter on 2026-09-14. Here is weekly signups and organic visits from 2026-07-06. Did the newsletter increase signups?",
+      "expected_output": "Notes the pre-period is about 10 weeks, checks organic visits is a plausible control not affected by the newsletter, runs causal_readout.py, and reports the verdict with the interval and caveats; says inconclusive if the script does.",
+      "expectations": [
+        "Checks the control is not affected by the change",
+        "Runs or specifies the causal_readout.py command with the change date",
+        "Reports the interval and caveats, not just a point estimate"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We have 9 months of data and spend on Google and Meta. Build us a marketing mix model.",
+      "expected_output": "Explains MMM needs roughly two years of weekly data across 3+ channels with variation; declines to run MMM now; proposes a holdout or geo test and a readout method for the next change instead.",
+      "expectations": [
+        "Does not run or fabricate an MMM on 9 months of data",
+        "States the data minimum",
+        "Proposes a feasible alternative"
+      ],
+      "files": []
+    }
+  ]
+}
