@@ -54,14 +54,14 @@
     {
       "id": 5,
       "prompt": "Station 5 for Vowboard: the waitlist page is on the preview link and the screenshot looks great. The gift is the vendor-tracker page, emailed on sign-up through the capture's mail provider. Mark the door done and move to station 6.",
-      "expected_output": "Does not mark station 5 done from a screenshot. Runs or requires, on the final refined revision, a synthetic end-to-end check: a test sign-up submits and is stored, a duplicate and an invalid email are handled, the gift email arrives through a test inbox or mail sink, the sign-up event is recorded, and the endpoint-down path shows an error. Records results in 05-door.md or lists them as blocking.",
+      "expected_output": "Does not mark station 5 done from a screenshot. Either executes, on the final refined revision and with synthetic data, the five acceptance checks and reports each result (stored sign-up, duplicate and invalid input, gift through a test inbox or sink, tracking event, endpoint-down error), or, where it cannot run one, lists that check as blocking in 05-door.md. The station stays open until all five pass.",
       "expectations": [
         "Refuses to mark the door done on visual evidence alone",
-        "Requires a synthetic test submission and confirmation it was stored",
-        "Requires duplicate and invalid-input handling to be checked",
-        "Requires the gift email to be confirmed through a test inbox or mail sink, and the sign-up tracking event to be recorded",
-        "Requires the endpoint-down path to show an error rather than a false success",
-        "Ties the results to the final revision after the refinement pass",
+        "For each of the five acceptance checks, either reports an executed result with its evidence or lists it as blocking; none is reported as passed without evidence",
+        "The gift check goes through a test inbox or mail sink, not a send to a real person",
+        "The endpoint-down check is included",
+        "Results are tied to the final revision after the refinement pass",
+        "Leaves station 5 open unless all five checks have passing evidence",
         "Uses synthetic data, not a real person's email"
       ],
       "files": []

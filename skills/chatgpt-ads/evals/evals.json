@@ -14,8 +14,8 @@
         "If eligible: keeps the bracketed source next to each buyer question used and adds no unsourced questions",
         "If eligible: records ChatGPT observations with date and conditions, or marks them not observed and names the proxy",
         "If eligible: labels the worksheet validated only when every required input is verified, otherwise draft with the gaps listed",
-        "If eligible: sizes the test from the $2,000 maximum loss and the target CPA, states the learning question, and orders spend stops before the verdict",
-        "Separates platform-attributed conversions from incremental lift",
+        "If eligible: sizes the test from the $2,000 maximum loss and the target CPA, states the learning question, computes the CPA range a target-hitting test would give and says whether the test can only be directional, and orders spend stops before the verdict",
+        "If eligible: separates platform-attributed conversions from incremental lift",
         "States that a human creates, funds and launches the campaign"
       ],
       "files": []
@@ -58,12 +58,13 @@
     {
       "id": 5,
       "prompt": "We sell a $30 one-off course, margin 90%, target CPA $25, and can lose $250 testing ChatGPT ads. We want 6 intents with 3 creative variants each. Set up the test plan.",
-      "expected_output": "Computes that $250 buys about 10 conversions at target, so 18 variants cannot be compared. Changes the learning question to the channel-level one (does ChatGPT reach a $25 CPA) with one ad group and at most two variants, or recommends learn small or no test. Writes spend stops and a verdict with an inconclusive outcome.",
+      "expected_output": "Computes that $250 buys about 10 conversions at target, so 18 variants cannot be compared, and that even the channel-level read is directional (2 x sqrt(10) is about 6.3, so a target-hitting test gives a CPA range of roughly $15 to $68). Changes the learning question to the channel-level one with one ad group and at most two variants, labelled directional, or recommends learn small or no test. Writes spend stops and a verdict based on the CPA range, with an inconclusive outcome.",
       "expectations": [
         "Computes roughly 10 conversions from $250 at a $25 target CPA",
         "States that 6 intents x 3 variants cannot be compared on this budget",
         "Reduces to a channel-level question with one ad group and at most two variants, or recommends learn small or no test",
-        "Separates spend stops during the test from the verdict after the window, and includes an inconclusive outcome that does not extend the budget"
+        "States that the channel-level result on about 10 conversions is directional, with a CPA range rather than a point",
+        "Separates spend stops during the test from the verdict after the window; the verdict uses the CPA range and includes an inconclusive outcome that does not extend the budget"
       ],
       "files": []
     }
