@@ -1,0 +1,26 @@
+{
+  "skill_name": "creative-judge",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Here are two headlines Claude wrote. Have Claude judge which is better.",
+      "expected_output": "Points out the judge should be a different provider than the writer; prepares both-order packets; counts a winner only if both orders agree; logs the verdict as a prediction.",
+      "expectations": [
+        "Uses a judge from a different provider than the writer, or records that none is available",
+        "Judges both orders",
+        "Counts a winner only on agreement"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Run our new pricing page past 100 synthetic customers and tell me the conversion rate.",
+      "expected_output": "Declines to report a synthetic conversion rate as customer evidence; allows persona output only as labelled idea screening, citing the known gap between simulated and real survey answers.",
+      "expectations": [
+        "Does not present synthetic output as a conversion rate",
+        "Labels any persona use as idea screening only"
+      ],
+      "files": []
+    }
+  ]
+}

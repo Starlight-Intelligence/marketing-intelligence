@@ -1,0 +1,18 @@
+{
+  "description": "Marketing team gate: asks before any MCP tool that sends, posts, publishes, schedules, spends or deletes.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/gate.mjs"],
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

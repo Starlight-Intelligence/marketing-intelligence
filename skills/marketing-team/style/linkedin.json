@@ -1,0 +1,25 @@
+{
+  "about": "Surface list for linkedin. Extend per brand with --brand.",
+  "banned": [
+    "excited to announce",
+    "humbled to",
+    "thrilled to share",
+    "agree?",
+    "thoughts?",
+    "i am pleased to",
+    "comment below",
+    "tag someone"
+  ],
+  "patterns": [
+    {
+      "name": "broetry",
+      "regex": "^(S+s){0,3}S+.?$",
+      "why": "One-to-four-word lines in a row read as LinkedIn broetry; check the rhythm."
+    },
+    {
+      "name": "hashtag-stack",
+      "regex": "(#w+s*){4,}",
+      "why": "Hashtag stacks."
+    }
+  ]
+}

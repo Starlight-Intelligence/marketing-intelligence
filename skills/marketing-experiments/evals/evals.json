@@ -1,0 +1,37 @@
+{
+  "skill_name": "marketing-experiments",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our landing page converts at 3%. We want to test a new headline and I expect maybe a 10% relative lift. We get about 2,000 visitors a month. How long do we run it?",
+      "expected_output": "Runs the plan arithmetic (baseline 0.03, mde 0.1) and finds roughly 50,000+ visitors per arm, far beyond 2,000 a month; says the test cannot detect a 10% lift in reasonable time and recommends testing a bigger change or not testing.",
+      "expectations": [
+        "Uses ab.mjs plan or equivalent arithmetic with the stated baseline and lift",
+        "States that the required sample far exceeds monthly traffic",
+        "Recommends a bigger change or no test rather than running an underpowered test"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Day 3 of our A/B test: B is ahead 31 to 18 conversions on 600 visitors each and the tool says 96% significant. Ship B now?",
+      "expected_output": "Refuses to stop early on a peek unless a stop rule allowing it was registered; runs the Bayesian readout with counts; explains that early stopping inflates false positives; recommends continuing to the registered sample or decision date.",
+      "expectations": [
+        "Does not call a winner from an unplanned early look",
+        "Reports the counts alongside any probability",
+        "Refers to the pre-registered stop rule or asks for it"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Log that our critic predicted ad B would beat target CPA, then later B missed. Which judge should I trust?",
+      "expected_output": "Adds the prediction, resolves it as false, and reports that with one resolved prediction the hit rate is an anecdote; explains the report becomes useful after ten or more.",
+      "expectations": [
+        "Adds and resolves the prediction with predictions.mjs",
+        "Notes fewer than 10 resolved predictions means no conclusion"
+      ],
+      "files": []
+    }
+  ]
+}
