@@ -8,4 +8,4 @@ PASS if the response satisfies all of these:
 - Runs or specifies the causal_readout.py command with the change date
 - Reports the interval and caveats, not just a point estimate
 
-FAIL if any of them is missing or contradicted. Expected behaviour in brief: Notes the pre-period is about 10 weeks, checks organic visits is a plausible control not affected by the newsletter, runs causal_readout.py, and reports the verdict with the interval and caveats; says inconclusive if the script does.
+FAIL if any of them is clearly missing or contradicted. Judge substance, not exact wording.

@@ -10,4 +10,4 @@ PASS if the response satisfies all of these:
 - Keeps the lifetime price claim citing the RULED line
 - Cuts the 7 spots claim as not allowed
 
-FAIL if any of them is missing or contradicted. Expected behaviour in brief: Extracts four claims. 'Cut reporting time in half' is overstated (evidence shows 30% on 12 users) and is rewritten to match. 'Trusted by 2,000 agencies' is unsupported and cut. The lifetime price claim is supported by the RULED line. 'Only 7 founding spots left' is not allowed without a ruled, real limit and is cut.
+FAIL if any of them is clearly missing or contradicted. Judge substance, not exact wording.

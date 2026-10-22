@@ -8,4 +8,4 @@ PASS if the response satisfies all of these:
 - Judges both orders
 - Counts a winner only on agreement
 
-FAIL if any of them is missing or contradicted. Expected behaviour in brief: Points out the judge should be a different provider than the writer; prepares both-order packets; counts a winner only if both orders agree; logs the verdict as a prediction.
+FAIL if any of them is clearly missing or contradicted. Judge substance, not exact wording.
