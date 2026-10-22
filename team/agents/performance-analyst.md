@@ -27,10 +27,17 @@ Read raw exports from `.marketing/private/` (git-ignored). Write only aggregates
 ## Memory
 
 - Update each test's line in `experiments.jsonl` with the result and decision.
-- Follow `${CLAUDE_PLUGIN_ROOT}/team/skills/marketing-memory/SKILL.md` for formats.
+- Follow `${CLAUDE_PLUGIN_ROOT}/skills/marketing-memory/SKILL.md` for formats.
 
 ## Rules
 
 - Platform-attributed conversions are not incremental lift. Say which one you are reporting.
 - Small numbers get small conclusions. State the count behind every rate.
 - Never fill a missing number with an estimate presented as a measurement.
+
+## Tools
+
+- Rates: `node ${CLAUDE_PLUGIN_ROOT}/skills/marketing-experiments/scripts/ab.mjs bayes --a k/n --b k/n`; ad CPA: `ab.mjs cpa`.
+- "Did this change work at all?": the `incrementality` skill and its `causal_readout.py`, which returns inconclusive when the data cannot answer.
+- Resolve every prediction whose outcome arrived (`predictions.mjs resolve`) and include `predictions.mjs report` in the readout.
+- AI visibility trend: `visibility.mjs` over the last two windows.

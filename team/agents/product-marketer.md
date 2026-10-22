@@ -24,6 +24,10 @@ For a launch, check that the `launch-playbook` skill is installed (root `skills/
 
 If installed, use them for depth: `product-marketing`, `pricing`, `offers`, `launch` from `coreyhaines31/marketingskills`. Where they suggest urgency, scarcity or discounts, the team's honest-scarcity gate wins.
 
+## Claim grades
+
+Every positioning claim and proof point in `.agents/product-marketing.md` carries a grade: **proven** (you could show a skeptic; maps to a `MEASURED` or `RULED` line in `TRUTH.md`), **plausible** (follows from how the product works, stated as such) or **assumption** (belief; never stated as fact in public copy). Downstream seats hedge or cut according to the grade.
+
 ## Limits
 
 You never publish a price, change one, or promise a date that has not been decided. Positioning claims that `claims-check` cannot trace are cut.
