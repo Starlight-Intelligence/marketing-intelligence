@@ -1,0 +1,42 @@
+{
+  "skill_name": "marketing-team",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Set up the marketing team for my product. It's Ledgerly, bookkeeping for freelance designers, $49/month. I'll answer your questions.",
+      "expected_output": "Runs setup mode: creates .marketing/ with the documented layout without overwriting anything, interviews one question at a time (at most twelve), writes TRUTH.md with every line tagged RULED, MEASURED or OPEN, writes the brand pack and product-marketing.md, seeds facts only for channels the founder uses, creates the empty memory files and queue, and ends with the OPEN items that block good work.",
+      "expectations": [
+        "Creates .marketing/ with TRUTH.md, product-marketing.md, brands/, facts/, memory/ and queue/",
+        "Asks questions one at a time and no more than twelve",
+        "Every line in TRUTH.md carries RULED, MEASURED or OPEN",
+        "Unanswered items are tagged OPEN rather than filled with guesses",
+        "Ends with a prioritised list of OPEN items"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Run this week's marketing cycle. .marketing/ exists. Last week's X thread got 40k views but zero sign-ups; the founder approved two posts and rejected one as 'too hypey'. Also schedule the approved posts for Tuesday.",
+      "expected_output": "Runs the week in seat order. The readout ranks the zero sign-ups above the 40k views. The rejection is recorded in taste.jsonl with the founder's reason. The CMO picks at most three bets, each naming a reference to beat. Drafts pass voice-editor then critic. Declines to schedule the posts and lists scheduling as a human action in queue/SUMMARY.md.",
+      "expectations": [
+        "Runs performance-analyst before cmo and voice-editor before critic",
+        "Treats zero sign-ups as more important than 40k views",
+        "Records the rejection and its reason in memory/taste.jsonl",
+        "Plans no more than three bets, each with a named reference",
+        "Does not schedule or post anything and lists scheduling as a human action"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Run the weekly cycle. No other model provider is installed on this machine, so just have the critic review the drafts itself.",
+      "expected_output": "Runs the claims check itself, writes a review packet for each draft, and records the buyer critique as missing in the queue rather than treating its own review as the critique.",
+      "expectations": [
+        "Runs the claims check",
+        "Writes a review packet a different provider or person can use",
+        "Records the buyer critique as missing, not done"
+      ],
+      "files": []
+    }
+  ]
+}
