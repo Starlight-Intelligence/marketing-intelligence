@@ -1,4 +1,4 @@
-// Run: node --test team/tests/   (from the repo root). The Python readout test needs uv on PATH.
+// Run: node --test team/tests/tools.test.mjs   (from the repo root). The Python readout test needs uv on PATH.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
@@ -103,16 +103,74 @@ test("judge counts a winner only when both orders agree", () => {
   assert.match(json(run(j, ["score", "--ab", join(d, "ab.md"), "--ba", join(d, "ba-flip.md")])).decision, /no decision/);
 });
 
-test("gate asks before risky MCP tools and stays silent otherwise", () => {
-  const g = join(root, "hooks", "gate.mjs");
-  const ask = (tool) => run(g, [], JSON.stringify({ tool_name: tool })).stdout;
-  assert.match(ask("mcp__slack__slack_send_message"), /"permissionDecision":"ask"/);
-  assert.match(ask("mcp__postiz__integrationSchedulePostTool"), /"ask"/);
-  assert.match(ask("mcp__taplio__publish_draft"), /"ask"/);
-  assert.equal(ask("mcp__taplio__list_posts"), "");
-  assert.equal(ask("mcp__taplio__create_draft"), "");
-  assert.equal(ask("Read"), "");
-  assert.equal(run(g, [], "not json").stdout, "");
+const gate = join(root, "hooks", "gate.mjs");
+const gateOut = (payload) => run(gate, [], typeof payload === "string" ? payload : JSON.stringify(payload)).stdout;
+const mcp = (tool) => gateOut({ tool_name: tool });
+const sh = (command) => gateOut({ tool_name: "Bash", tool_input: { command } });
+
+test("gate fails closed on MCP tools: only read-verb names without write verbs pass", () => {
+  // Codex P0: an executable tool whose name had no listed verb got no decision.
+  assert.match(mcp("mcp__n8n__execute_workflow"), /"permissionDecision":"ask"/);
+  assert.match(mcp("mcp__make__scenarios_run"), /"ask"/);
+  assert.match(mcp("mcp__slack__slack_send_message"), /"ask"/);
+  assert.match(mcp("mcp__postiz__integrationSchedulePostTool"), /"ask"/);
+  assert.match(mcp("mcp__taplio__publish_draft"), /"ask"/);
+  assert.match(mcp("mcp__taplio__create_draft"), /"ask"/);
+  assert.match(mcp("mcp__x__somethingNew"), /"ask"/);
+  // Read-only names pass to the normal permission flow.
+  assert.equal(mcp("mcp__taplio__list_posts"), "");
+  assert.equal(mcp("mcp__github__get_file_contents"), "");
+  assert.equal(mcp("mcp__Slack__slack_read_channel"), "");
+  assert.equal(mcp("mcp__Notion__notion-search"), "");
+  // Mixed names ask even when a read verb comes first.
+  assert.match(mcp("mcp__x__get_and_send_report"), /"ask"/);
+  assert.match(mcp("mcp__n8n__list_and_execute_workflows"), /"ask"/);
+  assert.match(mcp("mcp__supabase__query_then_delete"), /"ask"/);
+  // Non-MCP, non-Bash tools and bad input stay silent.
+  assert.equal(gateOut({ tool_name: "Read" }), "");
+  assert.equal(gateOut("not json"), "");
+});
+
+test("gate asks before shell commands that reach the network, publish, push or merge", () => {
+  // Codex P0: seats with Bash could bypass the MCP-only gate.
+  for (const c of [
+    "curl -s -X POST https://api.example.com/post",
+    "wget https://example.com",
+    "echo hi && ssh host",
+    "git status; git push origin main",
+    "gh pr merge 4 --squash",
+    "gh release create v1",
+    "gh api -X POST repos/a/b/issues",
+    "gh api repos/a/b/issues -f title=x",
+    "npm publish",
+    "stripe charges create --amount 100",
+    "twurl -d 'status=hi' /1.1/statuses/update.json",
+    "vercel --prod",
+    "aws s3 cp a s3://b",
+    "gcloud run deploy",
+    "echo $(/usr/bin/curl example.com)",
+  ]) assert.match(sh(c), /"permissionDecision":"ask"/, c);
+  for (const c of [
+    "node skills/marketing-team/scripts/utm.mjs --surface x --site example.com https://example.com/a",
+    "uv run skills/incrementality/scripts/causal_readout.py --csv a.csv",
+    "git status && git diff",
+    "gh pr view 4",
+    "gh api repos/a/b/pulls",
+    "ls -la",
+  ]) assert.equal(sh(c), "", c);
+});
+
+test("ab bayes rejects draw counts outside 1000..1000000 or not whole", () => {
+  // Codex P1: --draws 0 exited 0 with null stats.
+  const ab = s("marketing-experiments", "scripts", "ab.mjs");
+  for (const d of ["0", "-5", "1.5", "2000000", "abc"]) {
+    const r = run(ab, ["bayes", "--a", "40/1000", "--b", "80/1000", "--draws", d]);
+    assert.equal(r.status, 2, `draws ${d}`);
+    assert.match(r.stderr, /--draws must be a whole number from 1000 to 1000000/);
+    assert.equal(r.stdout, "");
+  }
+  assert.equal(run(ab, ["bayes", "--a", "40/1000", "--b", "80/1000", "--draws"]).status, 2);
+  assert.equal(run(ab, ["bayes", "--a", "40/1000", "--b", "80/1000", "--draws", "1000"]).status, 0);
 });
 
 test("causal readout recovers a planted lift and refuses a short pre-period", { skip: spawnSync("uv", ["--version"]).status !== 0 && "uv not installed" }, () => {
@@ -131,4 +189,15 @@ test("causal readout recovers a planted lift and refuses a short pre-period", { 
   assert.equal(lift.verdict, "lift");
   assert.ok(lift.effect_ci95[0] < 300 && lift.effect_ci95[1] > 300);
   assert.equal(go("2026-02-09").verdict, "inconclusive");
+});
+
+test("causal readout rejects draw counts outside 1000..100000 or not whole", { skip: spawnSync("uv", ["--version"]).status !== 0 && "uv not installed" }, () => {
+  const d = tmp();
+  writeFileSync(join(d, "x.csv"), "week,y,c\n2026-01-05,1,1\n2026-01-12,2,2\n");
+  const py = s("incrementality", "scripts", "causal_readout.py");
+  for (const draws of ["0", "-5", "1.5", "200000"]) {
+    const r = spawnSync("uv", ["run", "--quiet", py, "--csv", join(d, "x.csv"), "--date-col", "week", "--outcome", "y", "--controls", "c", "--change", "2026-01-12", "--draws", draws], { encoding: "utf8" });
+    assert.equal(r.status, 2, `draws ${draws}`);
+    assert.equal(r.stdout, "");
+  }
 });

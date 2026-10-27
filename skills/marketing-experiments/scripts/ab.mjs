@@ -2,9 +2,13 @@
 // Experiment arithmetic with no dependencies.
 //   plan   --baseline 0.04 --mde 0.2 [--alpha 0.05] [--power 0.8]   fixed sample size per arm (relative MDE)
 //   bayes  --a 40/1000 --b 55/1000 [--draws 200000] [--seed 1]       P(B beats A), expected loss, lift interval
+//                                     --draws must be a whole number from 1,000 to 1,000,000
 //   cpa    --spend 1140 --conversions 9                               CPA range from a Poisson approximation
 //   budget --max-loss 2000 --target-cpa 118 --min-per-variant 10      how many variants a budget can read
 // Output is JSON on stdout. Exit 2 on bad input.
+
+const MIN_DRAWS = 1000;
+const MAX_DRAWS = 1000000;
 
 const args = parseArgs(process.argv.slice(2));
 const mode = args._[0];
@@ -40,7 +44,7 @@ export function bayes({ a, b, draws = 200000, seed = 1 }) {
   const [ca, na] = ratio(a, "a");
   const [cb, nb] = ratio(b, "b");
   const rng = mulberry32(Number(seed));
-  const n = num(draws, "draws");
+  const n = drawCount(draws);
   let wins = 0, lossB = 0, lossA = 0;
   const lifts = new Float64Array(n);
   for (let i = 0; i < n; i++) {
@@ -136,6 +140,14 @@ function ratio(v, name) {
 function num(v, name) {
   const n = Number(v);
   if (v === undefined || !Number.isFinite(n)) throw new Error(`--${name} must be a number`);
+  return n;
+}
+
+function drawCount(v) {
+  const n = Number(v);
+  if (v === undefined || v === true || !Number.isInteger(n) || n < MIN_DRAWS || n > MAX_DRAWS) {
+    throw new Error(`--draws must be a whole number from ${MIN_DRAWS} to ${MAX_DRAWS} (got ${v === true ? "no value" : v})`);
+  }
   return n;
 }
 

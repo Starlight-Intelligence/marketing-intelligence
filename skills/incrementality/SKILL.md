@@ -28,6 +28,8 @@ uv run scripts/causal_readout.py --csv weekly.csv --date-col week --outcome sign
   --controls organic_visits,brand_searches --change 2026-09-14
 ```
 
+`--draws` sets the bootstrap resamples (default 2,000). It must be a whole number from 1,000 to 100,000; anything else exits with code 2.
+
 It fits the outcome on the controls before the change, predicts the after-period without the change, and returns the difference with a 95% interval. It returns `inconclusive`, with the reason, when:
 
 - the pre-period is shorter than 8 periods (or too short for the number of controls), or

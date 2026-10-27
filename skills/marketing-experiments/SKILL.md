@@ -44,7 +44,7 @@ It tells you how many variants the budget can actually read. A 2x2 factorial (ho
 
 ## 3. Read it
 
-- Rates: `node scripts/ab.mjs bayes --a 40/1000 --b 55/1000` gives the probability that B beats A, the expected loss of each choice, and a 95% interval for the lift. Report all three with the counts.
+- Rates: `node scripts/ab.mjs bayes --a 40/1000 --b 55/1000` gives the probability that B beats A, the expected loss of each choice, and a 95% interval for the lift. Report all three with the counts. `--draws` (default 200,000) must be a whole number from 1,000 to 1,000,000; anything else exits with code 2.
 - Ads: `node scripts/ab.mjs cpa --spend 1140 --conversions 9`. Under 10 conversions there is no range and the test cannot scale.
 - Apply the registered rules as written. Write the result, the decision and one-line lesson into the experiment's record.
 
@@ -58,7 +58,7 @@ node scripts/predictions.mjs resolve --id hook-2026-11-a --actual false --source
 node scripts/predictions.mjs report
 ```
 
-The report shows hit rate, error or Brier score per source. After ten or more resolved predictions it tells you which seat, model or judge to listen to, which nobody else in marketing tooling measures.
+The report lists each source (seat or model, with the prediction kind) and its score: hit rate for binary predictions, mean absolute error and mean absolute percentage error for numbers, Brier score for probabilities, with the count of resolved predictions. Sources with fewer than ten resolved predictions carry a caution. It does not rank sources or pick one for you; compare the scores yourself.
 
 ## Rules
 

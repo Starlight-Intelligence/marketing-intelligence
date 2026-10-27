@@ -10,7 +10,11 @@ residual-bootstrap 95% interval. It refuses to give a verdict when the pre-perio
 the controls do not track the outcome before the change.
 
     uv run causal_readout.py --csv data.csv --date-col week --outcome signups \
-        --controls organic_visits,brand_searches --change 2026-09-14 [--min-pre 8] [--min-r2 0.5]
+        --controls organic_visits,brand_searches --change 2026-09-14 [--min-pre 8] [--min-r2 0.5] \
+        [--draws 2000] [--seed 1]
+
+--draws (bootstrap resamples) must be a whole number from 1,000 to 100,000; each resample refits the
+model, so the cap keeps a run to seconds.
 
 The CSV needs one row per period, sorted or sortable by the date column (ISO dates). Controls must
 not be affected by the change itself. JSON on stdout; exit 2 on bad input.
@@ -26,6 +30,9 @@ import sys
 
 import numpy as np
 
+MIN_DRAWS = 1000
+MAX_DRAWS = 100_000
+
 
 def main() -> None:
     p = argparse.ArgumentParser()
@@ -39,6 +46,9 @@ def main() -> None:
     p.add_argument("--draws", type=int, default=2000)
     p.add_argument("--seed", type=int, default=1)
     a = p.parse_args()
+    if not MIN_DRAWS <= a.draws <= MAX_DRAWS:
+        print(f"causal_readout: --draws must be a whole number from {MIN_DRAWS} to {MAX_DRAWS} (got {a.draws})", file=sys.stderr)
+        sys.exit(2)
 
     try:
         result = readout(load(a.csv, a.date_col, a.outcome, a.controls.split(",")), a)
