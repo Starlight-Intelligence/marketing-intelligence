@@ -271,3 +271,39 @@ test("predictions refuse valueless, boolean-looking or empty values for numbers"
   assert.equal(run(p, ["add", "--file", file, "--id", "n2", "--what", "x", "--kind", "number", "--predicted", "", "--by", "analyst"]).status, 2);
   assert.equal(run(p, ["resolve", "--file", file, "--id", "n1", "--actual", "0"]).status, 0);
 });
+
+test("ab budget refuses a zero target CPA or minimum per variant", () => {
+  const ab = s("marketing-experiments", "scripts", "ab.mjs");
+  for (const extra of [["--target-cpa", "0"], ["--target-cpa", "-5"], ["--target-cpa", "25", "--min-per-variant", "0"], ["--target-cpa", "25", "--min-per-variant", "2.5"], ["--target-cpa", "1e-320"]]) {
+    const r = run(ab, ["budget", "--max-loss", "250", ...extra]);
+    assert.equal(r.status, 2, extra.join(" "));
+    assert.equal(r.stdout, "");
+  }
+  assert.equal(json(run(ab, ["budget", "--max-loss", "2000", "--target-cpa", "50"])).variants_readable, 4);
+});
+
+test("validate-jsonld reports blocks with no typed entity", () => {
+  const d = tmp();
+  const v = s("ai-search-visibility", "scripts", "validate-jsonld.mjs");
+  writeFileSync(join(d, "ctx.json"), JSON.stringify({ "@context": "https://schema.org" }));
+  writeFileSync(join(d, "empty.json"), "[]");
+  for (const f of ["ctx.json", "empty.json"]) {
+    const r = run(v, [join(d, f)]);
+    assert.equal(r.status, 1, f);
+    assert.ok(json(r).problems.some((p) => /no typed entity/.test(p.problem)), f);
+  }
+  writeFileSync(join(d, "graph.json"), JSON.stringify({ "@context": "https://schema.org", "@graph": [{ "@type": "Organization", name: "A", url: "https://a.io" }] }));
+  assert.equal(run(v, [join(d, "graph.json")]).status, 0);
+});
+
+test("causal readout is inconclusive when controls are collinear", { skip: spawnSync("uv", ["--version"]).status !== 0 && "uv not installed" }, () => {
+  const d = tmp();
+  const lines = ["week,y,control_a,control_b"];
+  for (let i = 1; i <= 8; i++) lines.push(`${new Date(Date.UTC(2026, 0, 7 * i)).toISOString().slice(0, 10)},${i},${i},${i}`);
+  lines.push(`${new Date(Date.UTC(2026, 0, 63)).toISOString().slice(0, 10)},9,9,10`);
+  writeFileSync(join(d, "c.csv"), lines.join("\n"));
+  const py = s("incrementality", "scripts", "causal_readout.py");
+  const out = JSON.parse(execFileSync("uv", ["run", "--quiet", py, "--csv", join(d, "c.csv"), "--date-col", "week", "--outcome", "y", "--controls", "control_a,control_b", "--change", new Date(Date.UTC(2026, 0, 63)).toISOString().slice(0, 10)], { encoding: "utf8" }));
+  assert.equal(out.verdict, "inconclusive");
+  assert.match(out.reason, /collinear|rank/);
+});

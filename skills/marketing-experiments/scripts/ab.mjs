@@ -83,8 +83,13 @@ export function cpa({ spend, conversions }) {
 }
 
 export function budget({ "max-loss": maxLoss, "target-cpa": target, "min-per-variant": minPer = 10 }) {
-  const conv = Math.floor(num(maxLoss, "max-loss") / num(target, "target-cpa"));
-  const variants = Math.floor(conv / num(minPer, "min-per-variant"));
+  const t = num(target, "target-cpa");
+  const m = num(minPer, "min-per-variant");
+  if (t <= 0) throw new Error("target-cpa must be greater than 0");
+  if (!Number.isInteger(m) || m < 1) throw new Error("min-per-variant must be a whole number of at least 1");
+  const conv = Math.floor(num(maxLoss, "max-loss") / t);
+  const variants = Math.floor(conv / m);
+  if (!Number.isFinite(conv) || !Number.isFinite(variants)) throw new Error("max-loss / target-cpa is not a finite number");
   return {
     conversions_affordable: conv,
     variants_readable: variants,

@@ -86,7 +86,9 @@ def readout(data, a):
         return {**base, "verdict": "inconclusive", "reason": f"pre-period has {n_pre} periods; need at least {max(a.min_pre, 3 * x.shape[1] + 2)}"}
 
     X = np.column_stack([np.ones(len(y)), x])
-    beta, *_ = np.linalg.lstsq(X[pre], y[pre], rcond=None)
+    beta, _, rank, _ = np.linalg.lstsq(X[pre], y[pre], rcond=None)
+    if rank < X.shape[1]:
+        return {**base, "verdict": "inconclusive", "reason": f"controls are collinear before the change (design rank {rank} < {X.shape[1]}); drop or combine controls"}
     fit = X[pre] @ beta
     resid = y[pre] - fit
     ss_tot = float(((y[pre] - y[pre].mean()) ** 2).sum())

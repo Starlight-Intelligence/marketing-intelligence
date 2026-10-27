@@ -42,7 +42,9 @@ export function check(source) {
     const nodes = (Array.isArray(data) ? data : data["@graph"] ?? [data]);
     if (Array.isArray(data)) data.forEach((d, j) => { if (!d?.["@context"]) problems.push({ block: i + 1, entry: j + 1, problem: "missing @context" }); });
     else if (!data["@context"]) problems.push({ block: i + 1, problem: "missing @context" });
+    const before = types.length;
     for (const node of nodes) walk(node, i + 1, problems, types);
+    if (types.length === before) problems.push({ block: i + 1, problem: "no typed entity (no @type found)" });
   });
   if (!blocks.length) problems.push({ block: null, problem: "no JSON-LD found" });
   return { ok: problems.length === 0, types, problems };
