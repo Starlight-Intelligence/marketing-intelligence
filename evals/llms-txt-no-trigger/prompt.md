@@ -5,4 +5,9 @@ timeout_seconds: 240
 tags: [llms-txt, no-trigger]
 ---
 
-Our robots.txt blocks /admin. Add a line that points crawlers to https://example.com/sitemap.xml and show me the full file.
+Here is our whole robots.txt:
+
+User-agent: *
+Disallow: /admin
+
+Add a line that points crawlers to https://example.com/sitemap.xml and show me the full updated file in your reply. Do not look for files; just answer.
