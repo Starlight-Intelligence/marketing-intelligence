@@ -1,0 +1,43 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "name": "Starlight Intelligence"
+  },
+  "description": "Evidence-led SEO, AEO, GEO and AI-search visibility workflows with connected-provider discovery, source provenance, offline deterministic evaluation and reviewable implementation plans. Skills only; no hosted monitoring service.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "capabilities": [],
+        "category": "Productivity",
+        "composerIcon": "./assets/icon.svg",
+        "defaultPrompt": [
+          "Audit my domain for SEO, AEO, GEO and AI-search visibility; cite sources and separate observed facts from hypotheses.",
+          "Find my top business-relevant SEO opportunities from connected first-party and third-party data.",
+          "Design a measured AI-search visibility experiment with a reproducible evidence ledger."
+        ],
+        "developerName": "Frank Riemer",
+        "displayName": "Starlight SEO & AI Visibility",
+        "logo": "./assets/icon.svg",
+        "longDescription": "Plan, audit and improve traditional SEO and AI-search discoverability using evidence-led workflows. Includes Semrush-aligned technical, keyword, SERP, competitor, content and link methods; AI citation sampling with explicit caveats; reproducible scoring and reviewable implementation handoffs. Uses only connectors separately authorized in your ChatGPT session; does not provide its own Semrush subscription, scheduled monitoring or autonomous publishing.",
+        "shortDescription": "SEO, AEO & GEO intelligence"
+      },
+      "onboardingSkill": "./skills/search-setup/SKILL.md"
+    }
+  },
+  "keywords": [
+    "SEO",
+    "AEO",
+    "GEO",
+    "AI Search Visibility",
+    "Search Intelligence",
+    "Semrush",
+    "Search Console",
+    "Technical SEO",
+    "Agentic Growth",
+    "GenCreator"
+  ],
+  "license": "MIT",
+  "name": "starlight-search-intelligence",
+  "repository": "https://github.com/Starlight-Intelligence/marketing-intelligence",
+  "version": "0.1.0"
+}

@@ -1,0 +1,7 @@
+{
+  "target_domain":"example.com",
+  "observations":[
+    {"engine":"example-model","surface":"test-api","model":"example-v1","market":"nl","language":"en","sample_set_id":"sample-2026w44","prompt_id":"question-1","repetition_id":"1","observed_at":"2026-10-27T13:00:00Z","response_available":true,"brand_mentioned":true,"cited_urls":["https://example.com/products/overview"]},
+    {"engine":"example-model","surface":"test-api","model":"example-v1","market":"nl","language":"en","sample_set_id":"sample-2026w44","prompt_id":"question-2","repetition_id":"1","observed_at":"2026-10-27T13:03:00Z","response_available":true,"brand_mentioned":false,"cited_urls":[]}
+  ]
+}

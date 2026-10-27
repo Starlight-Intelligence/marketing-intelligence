@@ -1,0 +1,48 @@
+name: Search intelligence checks
+on:
+  pull_request:
+    paths:
+      - 'plugins/starlight-search-intelligence/**'
+      - '.github/workflows/search-intelligence.yml'
+  push:
+    paths:
+      - 'plugins/starlight-search-intelligence/**'
+      - '.github/workflows/search-intelligence.yml'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s plugins/starlight-search-intelligence/scripts -p 'test_*.py' -v
+      - name: Offline CLI examples
+        run: |
+          cd plugins/starlight-search-intelligence
+          python scripts/growth_core.py score skills/search-setup/references/examples/opportunities.json > /tmp/score.json
+          python scripts/growth_core.py visibility skills/search-setup/references/examples/visibility.json > /tmp/visibility.json
+          python scripts/growth_core.py semrush-rank skills/search-setup/references/examples/semrush_rank.csv --database us --observed-at 2026-10-27T13:00:00+00:00 > /tmp/semrush.json
+          python - <<'PY'
+          import json
+          assert json.load(open('/tmp/score.json'))['count'] == 2
+          assert json.load(open('/tmp/visibility.json'))['cohorts'][0]['n'] == 2
+          assert json.load(open('/tmp/semrush.json'))['count'] == 1
+          PY
+      - name: Manifest and skill names
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('plugins/starlight-search-intelligence')
+          m=json.loads((root/'plugin.json').read_text())
+          assert m['name']==root.name
+          assert m['$schema']=='https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'
+          assert len(m['extensions']['com.openai']['interface']['shortDescription'])<=30
+          skills=list(root.glob('skills/*/SKILL.md'))
+          assert len(skills)==13
+          for skill in skills:
+              s=skill.read_text()
+              assert s.startswith('---\n') and ('name: '+skill.parent.name) in s
+          PY
