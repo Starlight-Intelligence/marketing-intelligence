@@ -9,7 +9,7 @@
         "Fetches official Google pages before stating any platform fact and records source URL and read date for each",
         "Marks anything it cannot confirm as [unverified] and does not rely on it",
         "Computes a target CPA of about 237 euro from the supplied margin and payback rule",
-        "Notes that 3,000 euro buys roughly 12 to 13 conversions at target CPA and says what that means for learning and for how directional the result is",
+        "Notes that 3,000 euro buys roughly 12 to 13 conversions at target CPA, compares it with any documented minimum volume (marking it unverified if none is found) and does not invent a learning threshold",
         "Requires conversion tracking to be verified as the business event and reconciled before drafting a campaign",
         "Labels the worksheet validated only if every required input is verified, otherwise draft with gaps listed",
         "Sets a brand-term policy and a landing-URL policy explicitly",

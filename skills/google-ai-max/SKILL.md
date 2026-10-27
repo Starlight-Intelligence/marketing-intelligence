@@ -37,7 +37,7 @@ Ask for these numbers; without them there is no plan:
 - Monthly search demand reachable in eligible markets, from the advertiser's own search console and ads data, not from guesses.
 - Spend limit for learning: the **maximum loss**.
 
-Automated campaigns need conversion volume to learn. If the maximum loss buys fewer than about 30 conversions at target CPA within the window, say the system is unlikely to leave its learning phase and the test is directional at best. This threshold is a rule of thumb from this skill; replace it with the figure in the grounding table if Google publishes one.
+Automated campaigns need conversion volume to learn. Add a grounding row for any minimum or recommended conversion volume Google publishes for the chosen bidding strategy, and compare the number of conversions the maximum loss buys at target CPA with it. If Google publishes no figure, mark it `[unverified]`, do not invent a threshold, and size the test with the CPA-range arithmetic in the `marketing-experiments` skill: fewer than 10 conversions can only be directional.
 
 Verdict: **test**, **learn small** (a capped, narrow test), or **no**. Give the two facts that decided it.
 
