@@ -4,7 +4,7 @@ Instructions for any agent working in this repository.
 
 ## What this repo is
 
-A public pack of marketing playbook skills under `skills/<name>/`, installed with `npx skills add frankxai/marketing-intelligence`. Each skill is one `SKILL.md` plus `evals/evals.json`.
+A public pack of marketing playbook skills under `skills/<name>/`, installed with `npx skills add Starlight-Intelligence/marketing-intelligence`. Each skill is one `SKILL.md` plus `evals/evals.json`. Runnable cases for `claude plugin eval` live at the repo root under `evals/<skill>-<case>/` (`prompt.md` plus `graders/*.md`); every skill has at least a `<skill>-trigger` and a `<skill>-no-trigger` case.
 
 ## Rules for changes
 

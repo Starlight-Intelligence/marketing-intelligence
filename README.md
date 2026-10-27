@@ -1,25 +1,9 @@
-# Marketing Intelligence (Reusable Agentic System)
+# Marketing Intelligence
 
-**General Purpose**: Swarms and agents for content creation, SEO, engagement, lead generation, and brand affection/adoption at scale.
+Marketing playbook skills and an agent marketing team from Starlight Intelligence. Skills live under `skills/<name>/`, each with a `SKILL.md` that says when to use it. Agents draft and stage; people publish, send, spend and set prices.
 
-**Core Capabilities**:
-- Content generation pipelines (articles, social, email sequences, stories)
-- Personalization at scale (ROI shares, quiz results as shareables)
-- Virality & affection engines (emotional stories, local impact, customer journeys)
-- SEO + distribution tied to product funnels (quiz as lead magnet)
+```bash
+npx skills add Starlight-Intelligence/marketing-intelligence
+```
 
-**PV-Lager / Rial / Zola Application** (specific in this alliance):
-- Zola Car Pod owner stories and "before/after" affection content
-- Shareable quiz results + personalized funding breakdowns
-- Virtual showroom scripts and agent-generated virtual tours
-- Content that drives mass adoption of architectural PV + hybrid climate in Germany
-- Measurement: engagement, quiz starts, conversion to consult, brand sentiment
-
-**Reusability**: Use across Starlight, Arcanea, FrankX, and other brands. Advance general patterns here; specialize in consuming repos like pv-lager-agentic.
-
-**Interconnects**:
-- pv-lager-agentic (quiz as content/lead engine)
-- agentic-business-os
-- sales-intelligence (content that feeds sales)
-
-See pv-lager-agentic for full applied examples and swarms.
+See [`skills/README.md`](skills/README.md) for the skill list and status, and [`AGENTS.md`](AGENTS.md) for the rules that apply to changes.

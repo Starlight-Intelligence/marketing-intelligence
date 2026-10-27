@@ -3,7 +3,7 @@
 Playbooks for agents that do marketing work: launches, ads inside AI assistants, and being cited by them. Each skill is a `SKILL.md` with its own `evals/`, works in any agent that reads skills, and stops at the decisions a human should make: prices, publishing, sending and spending.
 
 ```bash
-npx skills add frankxai/marketing-intelligence
+npx skills add Starlight-Intelligence/marketing-intelligence
 ```
 
 ## Skills
