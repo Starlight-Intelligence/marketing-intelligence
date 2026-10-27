@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Skill frontmatter
+        # Every SKILL.md needs a name and a description saying when to use it, or no harness routes to it.
+        run: |
+          node -e '
+            const fs = require("fs"), path = require("path");
+            const bad = [];
+            const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+              if (e.name === "node_modules" || e.name.startsWith(".git")) continue;
+              const p = path.join(d, e.name);
+              if (e.isDirectory()) walk(p);
+              else if (e.name === "SKILL.md") {
+                const fm = (fs.readFileSync(p, "utf8").match(/^---\n([\s\S]*?)\n---/) || [])[1] || "";
+                if (!/^name:\s*\S/m.test(fm) || !/^description:\s*\S/m.test(fm)) bad.push(p);
+              } } };
+            walk(".");
+            if (bad.length) { console.error("SKILL.md missing name or description:\n" + bad.join("\n")); process.exit(1); }
+            console.log("skills ok");'
+      - name: Tests
+        run: |
+          files=$(git ls-files "*.test.mjs" "*.test.js")
+          if [ -n "$files" ]; then node --test $files; else echo "no test files yet"; fi
