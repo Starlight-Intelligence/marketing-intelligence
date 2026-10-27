@@ -24,13 +24,19 @@ try {
 export function plan({ baseline, mde, alpha = 0.05, power = 0.8 }) {
   const p1 = num(baseline, "baseline");
   const rel = num(mde, "mde");
+  const al = num(alpha, "alpha");
+  const pw = num(power, "power");
   if (p1 <= 0 || p1 >= 1) throw new Error("baseline must be a rate between 0 and 1");
+  if (rel <= 0) throw new Error("mde must be greater than 0");
+  if (al <= 0 || al >= 1) throw new Error("alpha must be between 0 and 1");
+  if (pw <= 0 || pw >= 1) throw new Error("power must be between 0 and 1");
   const p2 = p1 * (1 + rel);
   if (p2 >= 1) throw new Error("baseline x (1 + mde) must stay below 1");
-  const za = normInv(1 - num(alpha, "alpha") / 2);
-  const zb = normInv(num(power, "power"));
+  const za = normInv(1 - al / 2);
+  const zb = normInv(pw);
   const pbar = (p1 + p2) / 2;
   const n = ((za * Math.sqrt(2 * pbar * (1 - pbar)) + zb * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2) / (p2 - p1) ** 2;
+  if (!Number.isFinite(n)) throw new Error("mde is too small to give a finite sample size");
   return {
     per_arm: Math.ceil(n),
     total: Math.ceil(n) * 2,

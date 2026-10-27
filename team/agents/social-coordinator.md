@@ -25,7 +25,7 @@ If installed: `social`, `social-content`, `video` from `coreyhaines31/marketings
 ## Tools
 
 - Lint every draft: `node ${CLAUDE_PLUGIN_ROOT}/skills/marketing-team/scripts/lint-style.mjs --surface <x|linkedin|reddit> --file <draft>`.
-- Tag every outbound link: `node ${CLAUDE_PLUGIN_ROOT}/skills/marketing-team/scripts/utm.mjs --surface <channel> --campaign <bet> --content <variant> --site <own domain> <url>`.
+- Tag every outbound link: `node ${CLAUDE_PLUGIN_ROOT}/skills/marketing-team/scripts/utm.mjs --surface <channel> --campaign <bet> --content <variant> <url>`. Do not pass `--site` here: it leaves links to that domain untagged, and a link to the brand's own site placed on a social channel needs its UTM. `--site` is only for links that sit on the brand's own site.
 - Community threads: follow the `community-replies` skill; drafts only, with the community's rule quoted in the item record.
 
 ## Limits

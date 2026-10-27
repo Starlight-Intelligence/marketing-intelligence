@@ -35,7 +35,7 @@ export function summarise(rows) {
     return { runs: rs.length, mention_rate: rate(m, rs.length), citation_rate: rate(c, rs.length) };
   };
   const assistants = Object.fromEntries(Object.entries(by((r) => `${r.assistant}|${r.mode ?? "default"}`)).map(([k, rs]) => [k, cell(rs)]));
-  const questions = Object.fromEntries(Object.entries(by((r) => `${r.question_id}|${r.assistant}`)).map(([k, rs]) => [k, cell(rs)]));
+  const questions = Object.fromEntries(Object.entries(by((r) => `${r.question_id}|${r.assistant}|${r.mode ?? "default"}`)).map(([k, rs]) => [k, cell(rs)]));
   const competitorCounts = {};
   for (const r of rows) for (const comp of r.competitors ?? []) competitorCounts[comp] = (competitorCounts[comp] ?? 0) + 1;
   const sourceCounts = {};

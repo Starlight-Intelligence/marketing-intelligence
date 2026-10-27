@@ -2,6 +2,7 @@
 // Deterministic floor for the voice pass: banned words and AI-writing patterns, per surface.
 //   node lint-style.mjs --surface x --file draft.md [--brand .marketing/brands/<brand>.banned.json] [--max-chars 280]
 // Lists come from ../style/<surface>.json plus ../style/common.json, and optionally a brand list.
+// A pattern is matched case-insensitively unless it sets its own "flags" (for example "u").
 // Fails closed: a missing or unreadable list is an error (exit 2), never a clean pass.
 // Exit 0 clean, 1 violations, 2 error. JSON on stdout.
 
@@ -29,7 +30,7 @@ export function lint(text, lists, maxChars) {
   const out = [];
   const lines = text.split("\n");
   const words = lists.flatMap((l) => l.banned ?? []);
-  const patterns = lists.flatMap((l) => (l.patterns ?? []).map((p) => ({ ...p, re: new RegExp(p.regex, "iu") })));
+  const patterns = lists.flatMap((l) => (l.patterns ?? []).map((p) => ({ ...p, re: new RegExp(p.regex, p.flags ?? "iu") })));
   lines.forEach((line, i) => {
     const lower = line.toLowerCase();
     for (const w of words) {

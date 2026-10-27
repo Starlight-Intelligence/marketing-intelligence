@@ -40,7 +40,8 @@ export function check(source) {
     let data;
     try { data = JSON.parse(b); } catch (e) { problems.push({ block: i + 1, problem: `invalid JSON: ${e.message}` }); return; }
     const nodes = (Array.isArray(data) ? data : data["@graph"] ?? [data]);
-    if (!Array.isArray(data) && !data["@context"]) problems.push({ block: i + 1, problem: "missing @context" });
+    if (Array.isArray(data)) data.forEach((d, j) => { if (!d?.["@context"]) problems.push({ block: i + 1, entry: j + 1, problem: "missing @context" }); });
+    else if (!data["@context"]) problems.push({ block: i + 1, problem: "missing @context" });
     for (const node of nodes) walk(node, i + 1, problems, types);
   });
   if (!blocks.length) problems.push({ block: null, problem: "no JSON-LD found" });

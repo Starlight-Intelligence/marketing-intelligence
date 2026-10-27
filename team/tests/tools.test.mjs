@@ -201,3 +201,73 @@ test("causal readout rejects draw counts outside 1000..100000 or not whole", { s
     assert.equal(r.stdout, "");
   }
 });
+
+test("lint-style surface patterns load as real regexes and match what they describe", () => {
+  // Codex review: "\b" in JSON decodes to a backspace, and "\w", "\s", "\S" had lost their backslash.
+  const l = s("marketing-team", "scripts", "lint-style.mjs");
+  const rulesFor = (surface, text) => {
+    const f = join(tmp(), "d.md");
+    writeFileSync(f, text);
+    const r = run(l, ["--surface", surface, "--file", f]);
+    return r.status === 2 ? null : json(r).violations.map((v) => v.rule);
+  };
+  assert.ok(rulesFor("ad", "The fastest option for your team.").includes("unsourced-superlative"));
+  assert.ok(!rulesFor("ad", "A calm option for your team.").includes("unsourced-superlative"));
+  assert.ok(rulesFor("email", "Read this URGENT note before Friday.").includes("all-caps-word"));
+  assert.ok(!rulesFor("email", "Read this before Friday, when the report is due.").includes("all-caps-word"));
+  assert.ok(rulesFor("x", "New guide out #seo #marketing #growth").includes("hashtag-stack"));
+  assert.ok(!rulesFor("x", "New guide out #seo #marketing").includes("hashtag-stack"));
+  assert.ok(rulesFor("linkedin", "Here is what we learned from the launch\nRead it twice.\n#a #b #c #d").includes("hashtag-stack"));
+  assert.ok(rulesFor("linkedin", "Then it broke.").includes("broetry"));
+  assert.ok(!rulesFor("linkedin", "We shipped the reporting change after three weeks of testing with customers.").includes("broetry"));
+  for (const f of ["ad", "email", "x", "linkedin", "reddit", "blog", "common"]) {
+    const list = JSON.parse(readFileSync(s("marketing-team", "style", `${f}.json`), "utf8"));
+    for (const p of list.patterns ?? []) assert.ok(!/[\x00-\x1f]/.test(p.regex), `${f}/${p.name} has a control character`);
+  }
+});
+
+test("visibility keeps assistant modes apart per question", () => {
+  const f = join(tmp(), "v.jsonl");
+  const rows = [];
+  for (let i = 0; i < 3; i++) rows.push({ date: "2026-11-02", assistant: "chatgpt", mode: "search", question_id: "q1", mentioned: true, cited: false });
+  for (let i = 0; i < 3; i++) rows.push({ date: "2026-11-02", assistant: "chatgpt", mode: "default", question_id: "q1", mentioned: false, cited: false });
+  writeFileSync(f, rows.map((r) => JSON.stringify(r)).join("\n"));
+  const out = json(run(s("ai-search-visibility", "scripts", "visibility.mjs"), ["--file", f]));
+  assert.equal(out.by_question["q1|chatgpt|search"].mention_rate.value, 1);
+  assert.equal(out.by_question["q1|chatgpt|default"].mention_rate.value, 0);
+  assert.deepEqual(out.gaps, ["q1|chatgpt|default"]);
+});
+
+test("validate-jsonld requires @context on every top-level array entry", () => {
+  const d = tmp();
+  const v = s("ai-search-visibility", "scripts", "validate-jsonld.mjs");
+  writeFileSync(join(d, "arr.json"), JSON.stringify([{ "@context": "https://schema.org", "@type": "Person", name: "A" }, { "@type": "Person", name: "B" }]));
+  const r = run(v, [join(d, "arr.json")]);
+  assert.equal(r.status, 1);
+  assert.deepEqual(json(r).problems.map((p) => p.problem), ["missing @context"]);
+  writeFileSync(join(d, "ok.json"), JSON.stringify([{ "@context": "https://schema.org", "@type": "Person", name: "A" }]));
+  assert.equal(run(v, [join(d, "ok.json")]).status, 0);
+});
+
+test("ab plan rejects impossible inputs instead of printing a sample size", () => {
+  const ab = s("marketing-experiments", "scripts", "ab.mjs");
+  for (const extra of [["--mde", "0"], ["--mde", "-0.1"], ["--mde", "0.2", "--alpha", "0"], ["--mde", "0.2", "--alpha", "1"], ["--mde", "0.2", "--power", "1"], ["--mde", "0.2", "--power", "0"], ["--mde", "1e-300"]]) {
+    const r = run(ab, ["plan", "--baseline", "0.05", ...extra]);
+    assert.equal(r.status, 2, extra.join(" "));
+    assert.equal(r.stdout, "");
+  }
+  assert.equal(run(ab, ["plan", "--baseline", "1", "--mde", "0.2"]).status, 2);
+});
+
+test("predictions refuse valueless, boolean-looking or empty values for numbers", () => {
+  const file = join(tmp(), "p.jsonl");
+  const p = s("marketing-experiments", "scripts", "predictions.mjs");
+  assert.equal(run(p, ["add", "--file", file, "--id", "n1", "--what", "signups", "--kind", "number", "--predicted", "120", "--by", "analyst"]).status, 0);
+  const before = readFileSync(file, "utf8");
+  for (const bad of [["--actual"], ["--actual", ""], ["--actual", " "], ["--actual", "true"]]) {
+    assert.equal(run(p, ["resolve", "--file", file, "--id", "n1", ...bad]).status, 2, JSON.stringify(bad));
+    assert.equal(readFileSync(file, "utf8"), before);
+  }
+  assert.equal(run(p, ["add", "--file", file, "--id", "n2", "--what", "x", "--kind", "number", "--predicted", "", "--by", "analyst"]).status, 2);
+  assert.equal(run(p, ["resolve", "--file", file, "--id", "n1", "--actual", "0"]).status, 0);
+});

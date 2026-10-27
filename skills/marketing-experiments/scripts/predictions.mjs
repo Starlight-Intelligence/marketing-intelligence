@@ -65,6 +65,7 @@ function pctError(rs) {
 }
 
 function value(kind, v) {
+  if (v === undefined || v === true || String(v).trim() === "") throw new Error("a value is required (got none)");
   if (kind === "binary") {
     if (!["true", "false", true, false].includes(v)) throw new Error("binary values are true or false");
     return v === true || v === "true";

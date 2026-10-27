@@ -12,7 +12,8 @@
   "patterns": [
     {
       "name": "all-caps-word",
-      "regex": "\b[A-Z]{4,}\b",
+      "regex": "\\b[A-Z]{4,}\\b",
+      "flags": "u",
       "why": "Shouting; also hurts deliverability."
     }
   ]

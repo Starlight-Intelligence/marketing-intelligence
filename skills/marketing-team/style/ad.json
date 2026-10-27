@@ -10,7 +10,7 @@
   "patterns": [
     {
       "name": "unsourced-superlative",
-      "regex": "\b(best|fastest|cheapest|only)\b",
+      "regex": "\\b(best|fastest|cheapest|only)\\b",
       "why": "Needs a source or it goes."
     }
   ]

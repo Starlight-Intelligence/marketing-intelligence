@@ -13,12 +13,12 @@
   "patterns": [
     {
       "name": "broetry",
-      "regex": "^(S+s){0,3}S+.?$",
+      "regex": "^(\\S+\\s){0,3}\\S+.?$",
       "why": "One-to-four-word lines in a row read as LinkedIn broetry; check the rhythm."
     },
     {
       "name": "hashtag-stack",
-      "regex": "(#w+s*){4,}",
+      "regex": "(#\\w+\\s*){4,}",
       "why": "Hashtag stacks."
     }
   ]
