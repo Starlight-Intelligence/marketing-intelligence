@@ -14,7 +14,7 @@ import json
 import math
 import sys
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -70,23 +70,22 @@ def parse_date(s):
         raise EvidenceError(f"Invalid observed_at ISO timestamp: {s}") from e
     if d.tzinfo is None or d.utcoffset() is None:
         raise EvidenceError("observed_at requires UTC offset")
-    return d.isoformat()
+    return d.astimezone(timezone.utc).isoformat()
 
 
 def hostname(value):
     if not isinstance(value, str) or not value:
         return None
-    parsed = urlparse(value if "://" in value else "https://" + value)
-    if parsed.scheme not in {"https", "http"} or not parsed.netloc:
-        return None
     try:
+        parsed = urlparse(value if "://" in value else "https://" + value)
+        if parsed.scheme not in {"https", "http"} or not parsed.netloc:
+            return None
         host = (parsed.hostname or "").lower().rstrip(".")
         if not host or any(c.isspace() for c in host) or "." not in host:
             return None
         return host
     except ValueError:
         return None
-
 
 def is_domain(url, domain):
     host, target = hostname(url), hostname(domain)
@@ -165,7 +164,7 @@ def visibility_report(payload):
             raise EvidenceError("observation must be an object")
         fields = ("engine", "surface", "model", "market", "language", "sample_set_id", "prompt_id", "observed_at", "repetition_id")
         values = [require_string(row, key) for key in fields]
-        parse_date(values[7])
+        values[7] = parse_date(values[7])
         identity = tuple(values)
         if identity in seen:
             raise EvidenceError("Duplicate observation identity (add unique repetition_id/time)")

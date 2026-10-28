@@ -91,6 +91,44 @@ class GrowthCoreTests(unittest.TestCase):
     def test_deterministic_hash(self):
         self.assertEqual(digest({"b": 2, "a": 1}), digest({"a": 1, "b": 2}))
 
+    def test_equivalent_utc_encodings_are_duplicates(self):
+        first = self.observation(True, ["https://example.com/a"])
+        for stamp in ["2026-10-27T13:00:00Z", "2026-10-27T15:00:00+02:00"]:
+            other = {**first, "observed_at": stamp}
+            with self.subTest(stamp=stamp), self.assertRaises(EvidenceError):
+                visibility_report({"target_domain": "example.com", "observations": [first, other]})
+
+    def test_distinct_repetitions_at_same_instant_remain_distinct(self):
+        first = self.observation(True, [], "1")
+        second = {**first, "repetition_id": "2", "observed_at": "2026-10-27T13:00:00Z"}
+        result = visibility_report({"target_domain": "example.com", "observations": [first, second]})
+        self.assertEqual(result["cohorts"][0]["n"], 2)
+
+    def test_malformed_bracketed_citation_raises_evidence_error(self):
+        item = self.observation(True, ["https://[broken.example.com"])
+        with self.assertRaises(EvidenceError):
+            visibility_report({"target_domain": "example.com", "observations": [item]})
+
+    def test_malformed_bracketed_target_raises_evidence_error(self):
+        with self.assertRaises(EvidenceError):
+            visibility_report({"target_domain": "https://[broken.example.com", "observations": []})
+
+    def test_cli_malformed_url_returns_structured_error(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+        from pathlib import Path
+        from growth_core import main
+        with tempfile.TemporaryDirectory() as tmp:
+            file = Path(tmp) / "bad.json"
+            file.write_text(json.dumps({"target_domain": "https://[broken.example.com", "observations": []}), encoding="utf-8")
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                code = main(["visibility", str(file)])
+            self.assertEqual(code, 2)
+            self.assertEqual(json.loads(stderr.getvalue())["status"], "invalid-input")
+
 
 if __name__ == "__main__":
     unittest.main()
