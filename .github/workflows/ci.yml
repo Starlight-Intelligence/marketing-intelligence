@@ -35,7 +35,26 @@ jobs:
             walk(".");
             if (bad.length) { console.error("SKILL.md missing name or description:\n" + bad.join("\n")); process.exit(1); }
             console.log("skills ok");'
-      - name: Tests
+      - name: Required files
+        # Fails on an empty or gutted tree instead of passing vacuously.
+        shell: bash
         run: |
-          files=$(git ls-files "*.test.mjs" "*.test.js")
-          if [ -n "$files" ]; then node --test $files; else echo "no test files yet"; fi
+          missing=0
+          for f in README.md .github/workflows/ci.yml .github/workflows/pr-gate.yml .github/workflows/pr-gate-poke.yml; do
+            if [ ! -s "$f" ]; then echo "::error::required file missing or empty: $f"; missing=1; fi
+          done
+          exit $missing
+      - name: Tests
+        # The required `test` check must run at least one passing test: no test files, or test
+        # files that define no tests, is a failure, not a pass.
+        shell: bash
+        run: |
+          mapfile -t files < <(git ls-files "*.test.mjs" "*.test.js")
+          if [ ${#files[@]} -eq 0 ]; then echo "::error::no test files found (*.test.mjs, *.test.js)"; exit 1; fi
+          node --test --test-reporter=tap "${files[@]}" | tee "$RUNNER_TEMP/tap.txt"
+          # node --test reports a file that defines no tests as one passing test named after the file.
+          empty=$(sed -nE 's/^(not )?ok [0-9]+ - //p' "$RUNNER_TEMP/tap.txt" | grep -xF -f <(printf '%s\n' "${files[@]}") || true)
+          if [ -n "$empty" ]; then echo "::error::test files that define no tests: $empty"; exit 1; fi
+          real=$(grep -E '^ok [0-9]+ - ' "$RUNNER_TEMP/tap.txt" | grep -vcE '# (SKIP|TODO)' || true)
+          if [ "${real:-0}" -lt 1 ]; then echo "::error::no tests passed"; exit 1; fi
+          echo "$real tests passed"
