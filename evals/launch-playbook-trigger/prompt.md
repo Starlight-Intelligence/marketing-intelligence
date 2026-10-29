@@ -1,7 +1,7 @@
 ---
-max_turns: 10
-allowed_tools: [Read, Glob, Grep, Skill]
-timeout_seconds: 240
+max_turns: 20
+allowed_tools: [Read, Glob, Grep, Skill, Write, Edit, WebSearch, WebFetch]
+timeout_seconds: 480
 tags: [launch-playbook, trigger]
 ---
 

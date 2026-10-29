@@ -1,7 +1,7 @@
 ---
-max_turns: 10
-allowed_tools: [Read, Glob, Grep, Skill]
-timeout_seconds: 240
+max_turns: 15
+allowed_tools: [Read, Glob, Grep, Skill, WebFetch, WebSearch]
+timeout_seconds: 360
 tags: [chatgpt-ads, trigger]
 ---
 

@@ -8,9 +8,9 @@ metadata:
 
 # ChatGPT ads
 
-Ads in ChatGPT appear around an answer the user asked for. This skill decides whether a test is worth running, and if it is, produces a campaign worksheet (validated, so a person can enter it into Ads Manager, or clearly marked as a draft with its gaps) and a test plan whose stop rules were written before any money moved.
+This skill decides whether a test is worth running, and if it is, produces a campaign worksheet (validated, so a person can enter it into Ads Manager, or clearly marked as a draft with its gaps) and a test plan whose stop rules were written before any money moved.
 
-It never creates, funds or launches a campaign, and never enters payment details.
+It never creates, funds or launches a campaign, and never enters payment details. Where and how ads are shown is a platform fact: take it from the grounding table in section 1, not from this page.
 
 Two kinds of statement appear below. **Platform facts** (formats, placements, targeting, bidding, tracking, eligibility) come only from official pages fetched today. **Working hypotheses** (for example, "the ad that works offers the next step after the answer") are this skill's strategy; label them as hypotheses in the output and let the test confirm or kill them.
 
@@ -89,7 +89,7 @@ For each ad group, draft up to three variants (fewer if section 7 says the budge
 - Names the specific next step the answer left open ("Try it on your own file", "See the price for a team of five"), not a slogan.
 - Uses the buyer's own noun for the problem, taken from the sourced questions.
 - Makes one claim, and only a claim the landing page proves in its first screen.
-- Does not imitate the answer's voice or formatting, and reads well under a neutral, thorough answer.
+- Does not imitate the answer's voice or formatting, and reads well next to a neutral, thorough answer, in whatever placement the grounding table documents.
 
 No superlative without a source, no invented urgency.
 
@@ -112,7 +112,7 @@ Write this before any budget is approved, so the result cannot be argued afterwa
 - **Target CPA:** the affordable acquisition cost.
 - **Maximum loss:** the amount the advertiser accepts losing to learn. This caps total spend for the test.
 - **Learning question and minimum data.** Pick one question first.
-  - "Does this channel reach target CPA?" is answered with a **CPA range**, not a point. With *n* conversions, treat the true count as roughly *n* ± 2√*n* (a Poisson approximation, fair from about 10 conversions), so CPA lies between spend ÷ (*n* + 2√*n*) and spend ÷ (*n* − 2√*n*). Before launch, compute the range you would get if the test hit target CPA exactly within the maximum loss. If its upper end is far above target, or the maximum loss buys fewer than 10 conversions at target, the test can only be **directional** and can never be scale-eligible: say so up front, and decide whether a directional answer is worth the money.
+  - "Does this channel reach target CPA?" is answered with a **CPA range**, not a point. With *n* conversions, treat the true count as roughly *n* ± 2√*n* (a Poisson approximation, fair from about 10 conversions), so CPA lies between spend ÷ (*n* + 2√*n*) and spend ÷ (*n* − 2√*n*). Before launch, compute the range you would get if the test hit target CPA exactly within the maximum loss. If its upper end is far above target, or the maximum loss buys fewer than 10 conversions at target, a result *at* target can only be **directional**: say so up front, and decide whether a directional answer is worth the money. The pre-launch sizing describes a test that lands on target; it does not override the verdict. A result well below target can still reach 10 or more conversions with its whole range under target, and the verdict rules below decide it (for example, a maximum loss of 9 × target buys 9 conversions at target, but 25 conversions on that spend gives a range of 9 ÷ 35 ≈ 0.26 × target to 9 ÷ 15 = 0.6 × target, which is scale-eligible).
   - "Which variant is better?" needs far more data: size it with a standard two-proportion power calculation and state the inputs. A small floor (for example 5 per variant) gives direction only.
   - If the budget cannot support the chosen question, cut variants and ad groups, or switch to the channel-level question. If even that is only directional and a directional answer is not worth the maximum loss, the verdict is **no test** or **learn small**.
 - **Window:** learning period plus the advertiser's conversion lag. No verdict before the window closes.
