@@ -1,0 +1,18 @@
+{
+  "about": "Surface list for reddit. Extend per brand with --brand.",
+  "banned": [
+    "check out my",
+    "shameless plug",
+    "we built",
+    "our product",
+    "sign up",
+    "dm me"
+  ],
+  "patterns": [
+    {
+      "name": "link-in-first-line",
+      "regex": "^.{0,80}https?://",
+      "why": "Leading with a link reads as promotion."
+    }
+  ]
+}

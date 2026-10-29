@@ -1,0 +1,20 @@
+{
+  "about": "Surface list for email. Extend per brand with --brand.",
+  "banned": [
+    "i hope this email finds you well",
+    "just following up",
+    "circling back",
+    "touching base",
+    "act now",
+    "limited time only",
+    "click here"
+  ],
+  "patterns": [
+    {
+      "name": "all-caps-word",
+      "regex": "\\b[A-Z]{4,}\\b",
+      "flags": "u",
+      "why": "Shouting; also hurts deliverability."
+    }
+  ]
+}
