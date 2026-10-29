@@ -1,0 +1,6 @@
+{
+  "opportunities": [
+    {"id":"verify-canonical-1","title":"Fix unintended canonical on product comparison page","impact":5,"business_fit":5,"confidence":0.85,"effort_hours":3,"evidence":[{"source":"site-crawl","ref":"sample-crawl-2026-10-27#page-4","observed_at":"2026-10-27T13:00:00Z"}]},
+    {"id":"publish-guide-2","title":"Publish evidence-backed integration guide","impact":3,"business_fit":4,"confidence":0.5,"effort_hours":18,"evidence":[{"source":"manual","ref":"synthetic-content-review-1","observed_at":"2026-10-27T13:00:00Z"}]}
+  ]
+}
