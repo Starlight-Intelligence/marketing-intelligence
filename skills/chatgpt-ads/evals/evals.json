@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "We sell Ledgerly, a bookkeeping tool for freelance designers, at $49/month, gross margin 80%, average customer stays 14 months. We are a US company selling in the US and Germany. Our payback rule: acquisition cost at most 3 months of margin. We can lose $2,000 to learn. Here are buyer questions from our support inbox and sales calls (sources in brackets): 'what's the easiest bookkeeping app for freelancers' [ticket 4411], 'do I need an accountant if I use QuickBooks' [call 2026-09-12], 'QuickBooks vs FreshBooks for a one-person studio' [ticket 4502], 'how do I track client expenses for tax' [ticket 4519], 'is bookkeeping software worth it under 50k revenue' [call 2026-09-30], 'best invoicing app that also does taxes in Germany' [ticket 4533]. Should we run ads in ChatGPT? Give me the plan.",
-      "expected_output": "Fetches official OpenAI pages and builds a grounding table (fact, URL, read date). The outcome then depends on what the pages say. If eligibility is blocked or ineligible: returns that result with the grounding rows and a research handoff or a no, and no worksheet. If eligible: answers fit with evidence, computes target CPA from the supplied economics ($49 x 80% x 3 = $117.60), groups the supplied questions into intents with their sources, records ChatGPT observations or marks them not observed, produces a worksheet marked validated or draft with its gaps, and a test plan sized from the $2,000 maximum loss with spend stops applied before the verdict. States that a human launches and funds.",
+      "expected_output": "Fetches official OpenAI pages and builds a grounding table (fact, URL, read date). The outcome then depends on what the pages say. If eligibility is blocked or ineligible: returns that result with the grounding rows and a research handoff or a no, and no worksheet. If eligible: answers fit with evidence, computes the affordable customer CPA from the supplied economics ($49 x 80% x 3 = $117.60), names the counted conversion event, and derives a conversion-specific target (customer CPA times an evidenced sign-up-to-customer rate) if that event is a sign-up or trial, leaving the economic verdict unresolved when no such rate is supplied, groups the supplied questions into intents with their sources, records ChatGPT observations or marks them not observed, produces a worksheet marked validated or draft with its gaps, and a test plan sized from the $2,000 maximum loss with spend stops applied before the verdict. States that a human launches and funds.",
       "expectations": [
         "Calls a web fetch or search tool against an official OpenAI domain before stating any platform fact",
         "Includes a grounding table where each platform fact has a source URL and a read date",
         "Reports yes, no or unknown for advertiser-account, buyer-market and policy eligibility, each tied to a grounding row",
         "If any eligibility check is no or unknown: stops with a blocked, research or no result and produces no campaign worksheet",
-        "If eligible: computes a target CPA of about $117.60 from the supplied margin and payback rule",
+        "If eligible: computes an affordable customer CPA of about $117.60 from the supplied margin and payback rule, names the conversion event the platform will count, and uses $117.60 as the test target only if that event is a paying customer; if the event is a trial or sign-up it asks for an evidenced sign-up-to-customer rate, derives a conversion-specific target (customer CPA times that rate) only from a supplied rate, and otherwise leaves the economic verdict unresolved",
         "If eligible: keeps the bracketed source next to each buyer question used and adds no unsourced questions",
         "If eligible: records ChatGPT observations with date and conditions, or marks them not observed and names the proxy",
         "If eligible: labels the worksheet validated only when every required input is verified, otherwise draft with the gaps listed",
@@ -65,6 +65,20 @@
         "Reduces to a channel-level question with one ad group and at most two variants, or recommends learn small or no test",
         "States that the channel-level result on about 10 conversions is directional, with a CPA range rather than a point",
         "Separates spend stops during the test from the verdict after the window; the verdict uses the CPA range and includes an inconclusive outcome that does not extend the budget"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "We are launching a waitlist for our budgeting app and want to test ChatGPT ads. Each paying customer is worth enough that we can afford to spend 60 dollars to acquire one. We can lose 600 dollars testing and will count waitlist sign-ups as the conversion. We have never converted a waitlist before, so we have no idea what share becomes customers. Set the pass/fail rule.",
+      "expected_output": "Does not apply the 60 dollar customer CPA to sign-ups. Explains that the target for a sign-up is the customer CPA times an evidenced sign-up-to-customer rate, that no rate exists, and so the economic verdict (scale-eligible, stop, inconclusive on economics) stays unresolved. Offers to count a customer event instead, or to run a learn-the-rate test with sign-up cost reported as directional and no scale decision, and still writes spend stops that do not depend on the unknown rate beyond a stated assumption marked as such.",
+      "expectations": [
+        "Does not use 60 dollars as the CPA target for waitlist sign-ups",
+        "States that a sign-up target needs an evidenced sign-up-to-customer rate and that none was supplied",
+        "Leaves the scale/stop economic verdict unresolved and says so",
+        "Does not invent or assume a conversion rate and present it as evidence",
+        "Offers a customer-event conversion or a learn-the-rate test reported as directional with no scale decision",
+        "Orders spend stops (including the maximum loss) before any verdict and says a person launches and funds"
       ],
       "files": []
     }

@@ -51,7 +51,7 @@ Fit is a judgement, so show the evidence rather than a score. Answer each questi
 
 - **Question-shaped demand.** Do buyers research and compare before buying? Evidence: support tickets, sales calls, "vs" searches, community threads.
 - **Reachable volume.** Is there enough of that demand in eligible markets to reach the minimum data in section 7 within the test window?
-- **Economics.** From the advertiser's numbers: average order or contract value, gross margin, and the cost per acquisition they can afford (margin × expected first-year value, or the payback rule they already use). Without these numbers there is no plan; ask for them.
+- **Economics.** From the advertiser's numbers: average order or contract value, gross margin, and the cost per acquisition they can afford (margin × expected first-year value, or the payback rule they already use). This is a cost per customer; section 7 converts it for any earlier conversion event. Without these numbers there is no plan; ask for them.
 - **Organic position.** What ChatGPT says today when asked about the category (section 4). Being absent from answers is a reason to research, not by itself a reason to spend.
 
 Verdict: **test**, **learn small** (fix organic visibility first, run a capped learning budget), or **no**. Give the two facts that decided it.
@@ -109,7 +109,7 @@ Write this before any budget is approved, so the result cannot be argued afterwa
 
 **Test plan, derived from the economics in section 3:**
 
-- **Target CPA:** the affordable acquisition cost.
+- **Conversion event and target CPA.** Name the one event the platform will count (paid order, trial, sign-up, waitlist join). The affordable acquisition cost from section 3 is a cost per *customer*. Use it as the target only when the counted event is a customer. For any earlier event, the target is a conversion-specific one: affordable customer CPA × the sign-up-to-customer rate, where that rate comes from the advertiser's own data (source and period cited). If the rate is unknown or unsourced, do not borrow the customer CPA for the sign-up and do not guess a rate: the economic verdict (stop, inconclusive, scale-eligible) stays **unresolved**. Say so, and either ask for the rate, change the counted event to a customer event, or run the test as learn-the-rate only, reporting sign-up cost as a directional figure with no scale decision.
 - **Maximum loss:** the amount the advertiser accepts losing to learn. This caps total spend for the test.
 - **Learning question and minimum data.** Pick one question first.
   - "Does this channel reach target CPA?" is answered with a **CPA range**, not a point. With *n* conversions, treat the true count as roughly *n* ± 2√*n* (a Poisson approximation, fair from about 10 conversions), so CPA lies between spend ÷ (*n* + 2√*n*) and spend ÷ (*n* − 2√*n*). Before launch, compute the range you would get if the test hit target CPA exactly within the maximum loss. If its upper end is far above target, or the maximum loss buys fewer than 10 conversions at target, a result *at* target can only be **directional**: say so up front, and decide whether a directional answer is worth the money. The pre-launch sizing describes a test that lands on target; it does not override the verdict. A result well below target can still reach 10 or more conversions with its whole range under target, and the verdict rules below decide it (for example, a maximum loss of 9 × target buys 9 conversions at target, but 25 conversions on that spend gives a range of 9 ÷ 35 ≈ 0.26 × target to 9 ÷ 15 = 0.6 × target, which is scale-eligible).
@@ -120,7 +120,7 @@ Write this before any budget is approved, so the result cannot be argued afterwa
 **Two kinds of rule, applied in this order:**
 
 1. **Spend stops** (during the test, protect money, not a verdict): pause a variant when its spend reaches 2 × target CPA with zero conversions; pause everything when total spend reaches the maximum loss. Pausing ends spending; the verdict still waits for lagged conversions to arrive.
-2. **Verdict** (after the window closes, on matured conversions), checked in this order:
+2. **Verdict** (after the window closes, on matured conversions of the event the target was set for; with no conversion-specific target the verdict is **unresolved**), checked in this order:
    - **Zero conversions:** **stop**.
    - **Fewer than 10 conversions:** the range formula does not hold (at 4 or fewer, *n* − 2√*n* is zero or negative), so compute no range. If spend ÷ conversions is above 2 × target, **stop**; otherwise **inconclusive**, reported as a directional point CPA. Never scale on fewer than 10.
    - **10 or more:** **scale-eligible** if the whole CPA range is at or below target; **stop** if the whole range is above target; otherwise **inconclusive**, reported with the point CPA as a directional estimate.
@@ -131,7 +131,9 @@ Any budget beyond the maximum loss, including scaling a scale-eligible result, i
 
 - **Approver:** the named person who funds and launches.
 
-Example with labelled assumptions (not benchmarks): first order €600 at 70% margin is €420 of margin; the advertiser's rule is to spend at most a third of first-order margin, so target CPA is €140; a maximum loss of €2,100 buys about 15 conversions at target. With 15 conversions, 2√15 ≈ 7.7, so the CPA range is €2,100 ÷ 22.75 ≈ €92 to €2,100 ÷ 7.25 ≈ €290. Even a test that lands exactly on target is therefore **inconclusive**, a directional estimate, and it cannot rank twelve variants. The plan says so before launch; the advertiser either accepts a directional read for €2,100, raises the maximum loss, or does not test. More budget is always the approver's decision.
+Example with labelled assumptions (not benchmarks), in multiples of target so no price enters: a maximum loss of 15 × target buys about 15 conversions at target. With 15 conversions, 2√15 ≈ 7.7, so the CPA range is 15 ÷ 22.75 ≈ 0.66 × target to 15 ÷ 7.25 ≈ 2.07 × target. Even a test that lands exactly on target is therefore **inconclusive**, a directional estimate, and it cannot rank twelve variants. The plan says so before launch; the advertiser either accepts a directional read, raises the maximum loss, or does not test. More budget is always the approver's decision.
+
+Same example where the counted event is a waitlist sign-up: the advertiser can afford a customer CPA of C, and its own records (cited) show 1 in 5 sign-ups becomes a customer, so the sign-up target is 0.2 × C and the 15-conversion maximum loss is 15 × (0.2 × C) = 3 × C. If no sign-up-to-customer rate exists, the sign-up target is unknown and the verdict is unresolved; judging sign-ups against C would call every sign-up affordable at five times what it can bear.
 
 ## Output
 
