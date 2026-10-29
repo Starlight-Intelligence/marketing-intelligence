@@ -69,11 +69,17 @@ Check tracking with a test conversion by a person before launch, mark pass or fa
 Register it with `marketing-experiments` before launch: the question, the deciding metric, the cells, maximum loss, window (learning period plus conversion lag), and rules written now.
 
 - **Spend stops:** pause a cell at 2 times target CPA in spend with zero conversions; pause everything at the maximum loss.
-- **Verdict after the window, on matured conversions:** zero conversions means stop; fewer than 10 per campaign means inconclusive and directional; with 10 or more, compute a CPA range and call scale-eligible only when the whole range is at or below target.
+- **Verdict after the window, on matured conversions:** zero conversions means stop; fewer than 10 per campaign means inconclusive and directional; with 10 or more, compute a CPA range (script or fallback below) and call scale-eligible only when the whole range is at or below target.
 - Comparing cells needs a power calculation; a small floor gives direction only. Say which kind of answer this test can give before it runs.
 - Inconclusive stays inconclusive. More budget is a new decision for the approver.
 
-If the `marketing-experiments` skill is not installed, do the arithmetic by hand and record the test in `.marketing/experiments.md` before launch (hypothesis, deciding metric, maximum loss, window, the rules above). CPA range for *n* conversions at spend *S*, valid from *n* of 10: treat the true count as *n* plus or minus 2 times the square root of *n*, so CPA lies between *S* divided by (*n* + 2 sqrt *n*) and *S* divided by (*n* - 2 sqrt *n*). Comparing variants needs a two-proportion power calculation; without one, report direction only.
+**Dependency and fallback.** The CPA range comes from the script in the `marketing-experiments` skill, which may not be installed. Fallback, in order:
+
+1. Run the bundled script: `node skills/meta-advantage-plus/scripts/cpa-range.mjs --spend <S> --conversions <n> --target <T>` (test: `node --test skills/meta-advantage-plus/scripts/cpa-range.test.mjs`). Method: treat the matured conversion count *n* as *n* plus or minus 2 times the square root of *n*, so CPA lies between *S* / (*n* + 2 sqrt *n*) and *S* / (*n* - 2 sqrt *n*). Valid from *n* of 10 only.
+2. If node is not available, apply the same formula by hand and show the arithmetic.
+3. If neither can be done, or an input (spend, matured conversions, target CPA) is missing, the verdict stays **unresolved**: report the directional CPA, do not scale, and name the missing input.
+
+Record the test in `.marketing/experiments.md` before launch (hypothesis, deciding metric, maximum loss, window, the rules above). Comparing variants needs a two-proportion power calculation; without one, report direction only.
 
 ## 7. Weekly review routine
 

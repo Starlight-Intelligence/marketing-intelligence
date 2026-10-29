@@ -93,11 +93,17 @@ Keep three numbers apart:
 Rules:
 
 - **Spend stops:** pause when total spend reaches the maximum loss; pause a campaign that reaches 2 times target CPA in spend with zero conversions.
-- **Verdict after the window, on matured conversions:** zero conversions means stop. Fewer than 10 means inconclusive, reported as a directional CPA, and never scale. With 10 or more, compute a CPA range with the `marketing-experiments` script; scale-eligible only if the whole range is at or below target.
+- **Verdict after the window, on matured conversions:** zero conversions means stop. Fewer than 10 means inconclusive, reported as a directional CPA, and never scale. With 10 or more, compute a CPA range with the `marketing-experiments` script or the fallback below; scale-eligible only if the whole range is at or below target.
 - Inconclusive is a valid result. It does not earn a bigger budget.
 - Any spend beyond the maximum loss is a new decision for the approver.
 
-If the `marketing-experiments` skill is not installed, do the arithmetic by hand and record the test in `.marketing/experiments.md` before launch (hypothesis, deciding metric, maximum loss, window, the rules above). CPA range for *n* conversions at spend *S*, valid from *n* of 10: treat the true count as *n* plus or minus 2 times the square root of *n*, so CPA lies between *S* divided by (*n* + 2 sqrt *n*) and *S* divided by (*n* - 2 sqrt *n*). Comparing variants needs a two-proportion power calculation; without one, report direction only.
+**Dependency and fallback.** The CPA range comes from the script in the `marketing-experiments` skill, which may not be installed. Fallback, in order:
+
+1. Run the bundled script: `node skills/google-ai-max/scripts/cpa-range.mjs --spend <S> --conversions <n> --target <T>` (test: `node --test skills/google-ai-max/scripts/cpa-range.test.mjs`). Method: treat the matured conversion count *n* as *n* plus or minus 2 times the square root of *n*, so CPA lies between *S* / (*n* + 2 sqrt *n*) and *S* / (*n* - 2 sqrt *n*). Valid from *n* of 10 only.
+2. If node is not available, apply the same formula by hand and show the arithmetic.
+3. If neither can be done, or an input (spend, matured conversions, target CPA) is missing, the verdict stays **unresolved**: report the directional CPA, do not scale, and name the missing input.
+
+Record the test in `.marketing/experiments.md` before launch (hypothesis, deciding metric, maximum loss, window, the rules above). Comparing variants needs a two-proportion power calculation; without one, report direction only.
 
 ## Output
 
