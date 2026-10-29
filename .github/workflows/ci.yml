@@ -20,27 +20,13 @@ jobs:
           node-version: '22'
       - name: Skill frontmatter
         # Every SKILL.md needs a name and a description saying when to use it, or no harness routes to it.
-        run: |
-          node -e '
-            const fs = require("fs"), path = require("path");
-            const bad = [];
-            const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) {
-              if (e.name === "node_modules" || e.name.startsWith(".git")) continue;
-              const p = path.join(d, e.name);
-              if (e.isDirectory()) walk(p);
-              else if (e.name === "SKILL.md") {
-                const fm = (fs.readFileSync(p, "utf8").match(/^---\n([\s\S]*?)\n---/) || [])[1] || "";
-                if (!/^name:\s*\S/m.test(fm) || !/^description:\s*\S/m.test(fm)) bad.push(p);
-              } } };
-            walk(".");
-            if (bad.length) { console.error("SKILL.md missing name or description:\n" + bad.join("\n")); process.exit(1); }
-            console.log("skills ok");'
+        run: node scripts/check-skill-frontmatter.mjs
       - name: Required files
         # Fails on an empty or gutted tree instead of passing vacuously.
         shell: bash
         run: |
           missing=0
-          for f in README.md .github/workflows/ci.yml .github/workflows/pr-gate.yml .github/workflows/pr-gate-poke.yml; do
+          for f in README.md scripts/check-skill-frontmatter.mjs .github/workflows/ci.yml .github/workflows/pr-gate.yml .github/workflows/pr-gate-poke.yml; do
             if [ ! -s "$f" ]; then echo "::error::required file missing or empty: $f"; missing=1; fi
           done
           exit $missing
