@@ -83,6 +83,10 @@ def hostname(value):
         host = (parsed.hostname or "").lower().rstrip(".")
         if not host or any(c.isspace() for c in host) or "." not in host:
             return None
+        try:
+            host = host.encode("idna").decode("ascii")
+        except (UnicodeError, UnicodeDecodeError):
+            return None
         return host
     except ValueError:
         return None
@@ -97,7 +101,7 @@ def require_evidence(row):
     if not isinstance(evidence, list) or not evidence:
         raise EvidenceError("evidence requires a nonempty list")
     for ev in evidence:
-        if not isinstance(ev, dict) or ev.get("source") not in PROVENANCE:
+        if not isinstance(ev, dict) or not isinstance(ev.get("source"), str) or ev["source"] not in PROVENANCE:
             raise EvidenceError(f"evidence.source must be one of {sorted(PROVENANCE)}")
         require_string(ev, "ref")
         parse_date(require_string(ev, "observed_at"))

@@ -88,6 +88,23 @@ class GrowthCoreTests(unittest.TestCase):
         with self.assertRaises(EvidenceError):
             parse_semrush_csv("Domain;Rank\nexample.com;23", "us", NOW)
 
+    def test_non_string_evidence_source_is_structured_error(self):
+        for source in (["semrush"], {"provider": "semrush"}, None):
+            op = self.opportunity("malformed", 1)
+            op["evidence"] = [{**EV, "source": source}]
+            with self.subTest(source=source), self.assertRaises(EvidenceError):
+                score_opportunities({"opportunities": [op]})
+
+    def test_unicode_and_idna_domain_citations_match(self):
+        self.assertTrue(is_domain("https://xn--bcher-kva.de/book", "bücher.de"))
+        self.assertTrue(is_domain("https://bücher.de/book", "xn--bcher-kva.de"))
+        item = self.observation(False, ["https://xn--bcher-kva.de/book"])
+        result = visibility_report({"target_domain": "bücher.de", "observations": [item]})
+        self.assertEqual(result["cohorts"][0]["cited_responses"], 1)
+
+    def test_invalid_idna_domain_does_not_crash(self):
+        self.assertFalse(is_domain("https://example.com.evil.org", "example.com"))
+
     def test_deterministic_hash(self):
         self.assertEqual(digest({"b": 2, "a": 1}), digest({"a": 1, "b": 2}))
 
