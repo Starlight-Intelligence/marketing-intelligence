@@ -1,0 +1,233 @@
+diff --git a/AGENTS.md b/AGENTS.md
+index 89077b7..c4b4fad 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -34,7 +34,7 @@ There is no unit-test suite. **Verify changes with `pnpm validate` (lint, typech
+ - **Identity comes from the filesystem, never a `name` field.** The tool at `agent/tools/save_brand_context.ts` is the tool `save_brand_context`; the subagent at `agent/subagents/content-marketer/` is the tool `content-marketer`.
+ - Authored slots: `agent/agent.ts` (model), `agent/instructions.md` (system prompt), `agent/tools/*.ts` (`defineTool`), `agent/connections/*.ts`, `agent/channels/*.ts`, `agent/skills/<name>/SKILL.md`, `agent/subagents/<id>/agent.ts` (`defineAgent`), `agent/sandbox.ts`. `agent/lib/` holds plain modules, not a slot. The same slots nest: every subagent directory can carry its own `instructions.md`, `tools/`, `connections/`, `skills/`, `sandbox.ts`, and `subagents/`.
+ - **Subagents inherit nothing.** Every declared subagent runs in a fresh child session with none of the parent's skills, connections, tools, or sandbox, so the caller packs everything into the `message`. This is why all five specialists have their own `get_brand_context` tool, their own `sandbox.ts`, and their own `connections/notion.ts`. Those six Notion copies (five specialists plus the root) are identical, so edit them together; `md5 -q $(find agent -name notion.ts -path '*connections*') | sort -u | wc -l` should print 1.
+-- **Tools** run in the app runtime (full `process.env`), one default export per file. Gate destructive tools with `approval` from `eve/tools/approval`. **Connections** accept the same `approval` field: `notion.ts` substring-matches an `APPROVAL_REQUIRED_TOOLS` list, and `typefully.ts` goes further, gating deletes unconditionally but gating `create_draft`/`edit_draft` only when the call actually schedules (`requestBody.publish_at` is set), so saving a plain draft stays friction-free. `resend.ts` is the one connection that also narrows which tools the model can discover at all, with `tools.allow`; see [The email agent's two boundaries](#the-email-agents-two-boundaries).
++- **Tools** run in the app runtime (full `process.env`), one default export per file. Gate destructive tools with `approval` from `eve/tools/approval`. **Connections** accept the same `approval` field: `notion.ts` substring-matches an `APPROVAL_REQUIRED_TOOLS` list, and `typefully.ts` goes further, gating deletes and `create_draft` unconditionally but gating `edit_draft` only when the call actually schedules (`requestBody.publish_at` is set), so editing a plain draft stays friction-free. `resend.ts` is the one connection that also narrows which tools the model can discover at all, with `tools.allow`; see [The email agent's two boundaries](#the-email-agents-two-boundaries).
+ - **Skills** are load-on-demand. Every packaged skill (`<name>/SKILL.md`) requires `description` frontmatter; that description is the routing hint and the only thing the model sees before loading. The `references/` files under a skill require a sandbox to materialize, so an agent with reference files needs its own `sandbox.ts`. The frontmatter is YAML, so an unquoted `description` containing a colon followed by a space fails to parse and the skill is dropped with a `discover/skill-frontmatter-invalid` error. Rephrase around the colon rather than quoting, to match the rest of the descriptions.
+ - **`agent/lib/` is the only real reuse mechanism.** eve has no shared-skill mechanism, and extensions are root-only, so everything two agents both need lives in `lib/<domain>/` as a factory: Blob paths, the asset tools, the style lint, and the `writing-quality` skill. Shared *procedures* are either duplicated markdown or a `defineSkill` factory, per [Shared skills](#shared-skills).
+ - An unauthored tool slot falls back to the framework default. Each specialist disables `bash` with `export default disableTool()` from `eve/tools`, so web reading goes through `web_fetch` rather than `curl`; deleting that file silently restores the shell.
+@@ -95,7 +95,7 @@ No skill is duplicated today: `content-editing` belongs to the content marketer
+ 
+ `product-marketer` authors it; everyone else reads it. That's the reason the subagent exists, and it's easy to erode.
+ 
+-Three agents hold `save_brand_context`, for three different jobs. The product marketer reworks the document, which is the main path. The lead records a durable correction the user states in passing, without spending a delegation on it. The coordinator captures something learned mid-task. None of the three is gated on approval. The write overwrites the document for the whole team and there is no previous version to recover, so the only check is the tool's own description telling the model to show the user what it's about to save and get agreement first. That sentence is load-bearing for all three callers, which is why it lives in the description rather than being repeated in each `instructions.md`. The product marketer restates it because writing the document is its deliverable rather than an aside.
++Three agents hold `save_brand_context`, for three different jobs. The product marketer reworks the document, which is the main path. The lead records a durable correction the user states in passing, without spending a delegation on it. The coordinator captures something learned mid-task. All three are gated on approval, since the write overwrites the document for the whole team and there is no previous version to recover. The approval prompt shows a call rather than the document, so the real check is still the tool's own description telling the model to show the user what it's about to save and get agreement first. That sentence is load-bearing for all three callers, which is why it lives in the description rather than being repeated in each `instructions.md`. The product marketer restates it because writing the document is its deliverable rather than an aside.
+ 
+ The lead's `instructions.md` deliberately does not interview the user to build the document from scratch, even though it could. That work needs the interviewing discipline and the skills in `product-marketer/skills/`, and the lead is told to route rather than produce. If you find yourself adding positioning guidance to `agent/instructions.md`, it belongs in the subagent instead.
+ 
+@@ -154,7 +154,7 @@ Contradictions cost more than verbosity. Take a style skill written in em dashes
+ - **Never ask the user for API keys, client secrets, or any other credentials.**
+ - **Never commit secrets.** `.env*` is gitignored. Notion and Resend both authorize per user via Vercel Connect, with their connector UIDs read from `NOTION_CONNECTOR` and `RESEND_CONNECTOR`; Blob auth is via the project's OIDC token. `TYPEFULLY_API_KEY` is the one static credential, read from the environment inside `getToken`, never inlined. The Resend connector only issues `user` tokens, so there is no app-scoped fallback: a session with no resolved principal fails with `principal_required` rather than quietly sending as the app.
+ - If you ever build a `RegExp` from data, escape it (literal match) and bound the input length. `lib/content/config.ts` does both, since its patterns come from a skill's banned-words file. Keep that logic there rather than inlining it in a tool: it's the one place the escaping and the failing-open behavior are documented together.
+-- Gate irreversible or high-impact actions behind `approval`: destructive tools (`delete_asset`, `clear_user_preferences`) and connection writes (the Notion, Typefully, and Resend lists above). `save_brand_context` is the deliberate exception: it overwrites shared state with no gate, because the prompt was costing more than it caught. Its safety is the instruction to agree the document with the user first, so treat that instruction as load-bearing.
++- Gate irreversible or high-impact actions behind `approval`: destructive tools (`delete_asset`, `clear_user_preferences`) and connection writes (the Notion, Typefully, and Resend lists above). `save_brand_context` is gated too, since it overwrites shared state; the instruction to agree the document with the user first stays load-bearing, because the approval prompt doesn't show the document. `open_factory_ticket` is gated through `PUBLISH_TOOLS` in `lib/starlight/config.ts` and refuses to run if it isn't listed there.
+ - **Prefer `tools.allow` over `approval` when a remote server is much broader than the job.** An approval gate still lets the model discover a tool, plan around it, and put a prompt in front of the user for something it should never have been reaching for. `connections/resend.ts` is the worked example. Watch for prefix collisions when matching bare names as substrings: `remove-contact` also matches `remove-contact-from-segment`, which is harmless there because both should gate, but would not be if one of them should stay open.
+ - For per-user storage, derive the key from the resolved principal (`ctx.session.auth.current`), never from model input — see `agent/lib/user-preferences/config.ts`. Preference files, brand context, and handoff artifacts each live under a reserved Blob prefix that the general asset tools refuse, so none can be used as a side channel.
+ - Artifact ids come from the model on read, so `artifactKey` validates them against an anchored pattern before building a Blob key. That check is what stops an id like `../brand-context/brand.md` reaching a managed document; an invalid id and a missing one both return `found: false`, so a probe learns nothing from the difference.
+diff --git a/README.md b/README.md
+index d6b082b..aaebf3e 100644
+--- a/README.md
++++ b/README.md
+@@ -64,7 +64,7 @@ Each specialist has a distinct job: the product marketer decides what the team c
+ - **One lead, five specialists.** The lead loads the brand context and your preferences, writes a brief for the right specialist, and hands back what they produce. It never writes deliverables itself.
+ - **Every brief is self-contained.** Specialists start fresh each time, with no shared conversation history, so the lead's brief carries everything and each specialist reads the brand context itself.
+ - **Delegation goes one level deep.** Specialists do their own research and edit their own drafts against a written rubric rather than spawning further agents.
+-- **Nothing irreversible happens without you.** Sends and deletes in Resend, deletes and scheduled publishes in Typefully, and page moves in Notion all wait for your approval. Drafting stays friction-free. The email specialist also only sees 47 of Resend's roughly 85 tools, so account administration is out of reach entirely.
++- **Nothing irreversible happens without you.** Sends and deletes in Resend, new drafts, deletes, and scheduled publishes in Typefully, brand context saves, factory tickets, and page moves in Notion all wait for your approval. Editing a draft stays friction-free. The email specialist also only sees 47 of Resend's roughly 85 tools, so account administration is out of reach entirely.
+ - **Slack pins four starter prompts** in a fresh conversation, one per specialist: sharpen our positioning, write a blog post, draft social posts, review a page's SEO.
+ 
+ The full approval matrix, the credential model, and the reasoning behind each boundary live in [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md).
+diff --git a/agent/instructions.md b/agent/instructions.md
+index d8a864f..e9b9f65 100644
+--- a/agent/instructions.md
++++ b/agent/instructions.md
+@@ -59,6 +59,18 @@ Specialists hand back artifact ids the same way, for long output meant for anoth
+ 
+ Surface the caveats a specialist flags. When it reports an unverified claim, a gap it couldn't fill, or a hedged number, carry that to the user instead of smoothing it over. Keep your own messages short; let the work speak.
+ 
++## 5. Run Arcanea work through its review seats
++
++When a request touches Arcanea, its world, characters, mark, or visuals, the seats have an order, and each brief carries what the seat before it produced:
++
++- Lore before craft. Anything that states a fact about the world or shows a character goes to `canon-keeper` before it ships. A `Verdict: BLOCK` stops the piece: carry the findings to the user rather than routing around them.
++- Character work runs `character-designer`, then `canon-keeper`, then `visual-director`.
++- Questions about the mark, type, or gradients go to `brand-architect` first, and its ruling goes into every visual brief after it.
++- Prose for an audience goes to `voice-editor` last, after the writer and after `canon-keeper`. A `Verdict: REJECT` goes back to the writer with the voice editor's list.
++- `outlier-scout` and `performance-analyst` inform what to make, so route to them before planning a piece rather than after it ships.
++
++Seats start fresh, so quote the canon sections a piece depends on into its brief: read them with `read_canon`. When a seat hands back work that needs code, open one ticket with `open_factory_ticket` for the whole piece rather than one per seat.
++
+ # Notes
+ 
+ - Don't fabricate links, quotes, statistics, or handles. If you don't have something, say so and ask.
+diff --git a/agent/lib/brand-context/tools.ts b/agent/lib/brand-context/tools.ts
+index ecc509b..c27a2d3 100644
+--- a/agent/lib/brand-context/tools.ts
++++ b/agent/lib/brand-context/tools.ts
+@@ -1,5 +1,6 @@
+ import { list, put } from "@vercel/blob";
+ import { defineTool } from "eve/tools";
++import { always } from "eve/tools/approval";
+ import { z } from "zod";
+ import {
+   BRAND_CONTEXT_KEY,
+@@ -83,15 +84,15 @@ export const getBrandContextTool = () =>
+  *
+  * @remarks
+  * This overwrites the whole document and the document is shared by the entire team, so a careless
+- * write destroys work that wasn't the caller's. There is no approval gate and no undo: the
+- * protection is the description below telling the model to load and merge rather than replace from
+- * memory, plus each calling agent's instruction to agree the document with the user before saving.
+- * Add `approval` back if a deployment needs a hard gate on shared state.
++ * write destroys work that wasn't the caller's. There is no undo, so every call pauses for human
++ * approval, on top of the description below telling the model to load and merge rather than replace
++ * from memory and each calling agent's instruction to agree the document with the user first.
+  *
+  * @returns The `save_brand_context` tool definition.
+  */
+ export const saveBrandContextTool = () =>
+   defineTool({
++    approval: always(),
+     description:
+       "Save the team's shared brand context (Markdown). This overwrites the whole document for " +
+       "everyone and cannot be undone, so load the current context first, merge the new " +
+diff --git a/agent/subagents/product-marketer/agent.ts b/agent/subagents/product-marketer/agent.ts
+index 4b5e7eb..35a52b7 100644
+--- a/agent/subagents/product-marketer/agent.ts
++++ b/agent/subagents/product-marketer/agent.ts
+@@ -12,9 +12,9 @@ import { defineAgent } from "eve";
+  *
+  * This is the only specialist that treats the brand context document as its deliverable rather than
+  * as input, so it carries `save_brand_context` alongside the read tool. That write overwrites the
+- * document for the whole team, with no approval gate and no previous version to recover, which is
+- * why the interviewing discipline in `instructions.md` matters: agreeing the document with the user
+- * before saving is the only review it gets.
++ * document for the whole team with no previous version to recover. The save pauses for approval,
++ * but the interviewing discipline in `instructions.md` is still what decides what gets written:
++ * agreeing the document with the user before saving is the review that matters.
+  *
+  * A positioning document is short by design, and length here is usually a symptom of hedging rather
+  * than thoroughness, so the brevity discipline lives in `instructions.md`.
+diff --git a/agent/subagents/product-marketer/instructions.md b/agent/subagents/product-marketer/instructions.md
+index e4890f0..0198ba9 100644
+--- a/agent/subagents/product-marketer/instructions.md
++++ b/agent/subagents/product-marketer/instructions.md
+@@ -47,7 +47,7 @@ The alternative you're positioning against is often not a competitor. It's a spr
+ ## 4. Write the document, then get agreement
+ 
+ - `brand-context` carries what belongs in the shared document, how it's structured, and how to merge into it without dropping what's there.
+-- Show the user the full document in the conversation and get their agreement before you save. `save_brand_context` overwrites the document for the whole team, nothing pauses to confirm it, and there is no previous version to go back to. You are the check.
++- Show the user the full document in the conversation and get their agreement before you save. `save_brand_context` overwrites the document for the whole team and there is no previous version to go back to. The save pauses for approval, but the approval prompt shows a tool call rather than the document, so you are still the check.
+ - Keep it a briefing rather than an archive. Every specialist loads this at the start of every task, so length here is a tax on all of them. Long-form source material belongs in an asset or their own docs.
+ - Leave campaign detail out. A launch brief belongs in the delegation that needs it, not in the document everyone reads.
+ 
+diff --git a/agent/subagents/social-media-coordinator/connections/typefully.ts b/agent/subagents/social-media-coordinator/connections/typefully.ts
+index eb8b9c1..1d08ab5 100644
+--- a/agent/subagents/social-media-coordinator/connections/typefully.ts
++++ b/agent/subagents/social-media-coordinator/connections/typefully.ts
+@@ -10,12 +10,19 @@ const DELETE_TOOLS = [
+   "typefully_delete_thread",
+ ];
+ 
++/**
++ * Bare Typefully tool names that always require writer approval, scheduled or not.
++ * A new draft lands in a queue the whole team can publish from, so creating one is
++ * gated even without `publish_at`.
++ */
++const APPROVAL_REQUIRED_TOOLS = ["typefully_create_draft"];
++
+ /**
+  * Bare Typefully tool names that can publish or schedule a post. They are gated
+- * only when the call actually publishes or schedules — i.e. when `publish_at` is
+- * set — so saving a plain draft and editing copy stay friction-free.
++ * only when the call actually publishes or schedules, that is when `publish_at`
++ * is set, so editing copy stays friction-free.
+  */
+-const PUBLISH_TOOLS = ["typefully_create_draft", "typefully_edit_draft"];
++const PUBLISH_TOOLS = ["typefully_edit_draft"];
+ 
+ /**
+  * Read `requestBody.publish_at` from a tool input without trusting its shape.
+@@ -36,7 +43,11 @@ const readPublishAt = (input: unknown): unknown => {
+ 
+ export default defineMcpClientConnection({
+   approval: ({ toolName, toolInput }) => {
+-    if (DELETE_TOOLS.some((tool) => toolName.includes(tool))) {
++    if (
++      [...DELETE_TOOLS, ...APPROVAL_REQUIRED_TOOLS].some((tool) =>
++        toolName.includes(tool)
++      )
++    ) {
+       return "user-approval";
+     }
+     if (PUBLISH_TOOLS.some((tool) => toolName.includes(tool))) {
+diff --git a/agent/subagents/social-media-coordinator/instructions.md b/agent/subagents/social-media-coordinator/instructions.md
+index 380f0b9..17fcad2 100644
+--- a/agent/subagents/social-media-coordinator/instructions.md
++++ b/agent/subagents/social-media-coordinator/instructions.md
+@@ -36,7 +36,7 @@ Write links as plain markdown, `[label](url)`. Don't paste a bare URL, and don't
+ 
+ ## 4. Draft freely, schedule only on approval
+ 
+-- Saving and editing plain drafts is your normal mode: do it without ceremony. A draft with no `publish_at` is inert, so there's no cost to parking work in the queue.
++- Editing plain drafts is your normal mode: do it without ceremony. Creating a new draft pauses for the user's approval, so batch the drafts for one request into as few creates as the platforms allow and say what you're about to queue.
+ - Setting `publish_at` schedules or publishes a post. Only set it when the user has actually asked to schedule or publish, and propose the time in the conversation first so they can confirm the slot. Never set it just because a brief mentioned a date.
+ - Deleting a draft, comment, or thread is permanent, so only do it on an explicit request naming what to delete.
+ - Decide before you call, rather than leaning on the approval prompt that scheduling and deleting raise. If a prompt appears you didn't intend, you misread the request.
+diff --git a/agent/tools/open_factory_ticket.ts b/agent/tools/open_factory_ticket.ts
+new file mode 100644
+index 0000000..18da70e
+--- /dev/null
++++ b/agent/tools/open_factory_ticket.ts
+@@ -0,0 +1,3 @@
++import { openFactoryTicketTool } from "#lib/starlight/tools.js";
++
++export default openFactoryTicketTool();
+diff --git a/agent/tools/read_canon.ts b/agent/tools/read_canon.ts
+new file mode 100644
+index 0000000..20c671f
+--- /dev/null
++++ b/agent/tools/read_canon.ts
+@@ -0,0 +1,3 @@
++import { readCanonTool } from "#lib/starlight/tools.js";
++
++export default readCanonTool();
+diff --git a/docs/ARCHITECTURE.md b/docs/ARCHITECTURE.md
+index b5ff84c..fbdb309 100644
+--- a/docs/ARCHITECTURE.md
++++ b/docs/ARCHITECTURE.md
+@@ -33,7 +33,9 @@ agent/
+     slack.ts                        # inbound route for Slack, credentials via Vercel Connect
+   tools/
+     get_brand_context.ts            # read the team's shared product/positioning/voice document
+-    save_brand_context.ts           # overwrite it (no approval gate)
++    save_brand_context.ts           # overwrite it (approval: always)
++    read_canon.ts                   # read the locked Arcanea canon from GitHub
++    open_factory_ticket.ts          # open a factory issue on GitHub (approval: always)
+     get_user_preferences.ts         # read this principal's standing preferences
+     save_user_preferences.ts        # write them
+     clear_user_preferences.ts       # delete them (approval: always)
+@@ -118,7 +120,7 @@ agent/
+ | Content marketer | `agent/subagents/content-marketer/` | subagent | Plans content by buyer stage, then drafts long-form. Owns four skills and a sandbox. Does not publish, schedule, or touch social accounts. |
+ | SEO | `agent/subagents/seo/` | subagent | Audits a page against what a fetch can actually show, plans hierarchy, URLs and internal linking, writes JSON-LD, and scopes templated page sets. Owns four skills and a sandbox. Recommends titles, meta descriptions, and slugs; hands body copy to the content marketer. Has no crawler, rank tracker, or Search Console, and says so instead of inferring. |
+ | Email | `agent/subagents/email/` | subagent | Takes copy the content marketer (or the user) already wrote, reworks it for an inbox, then builds the template or broadcast in Resend, picks a verified from address, targets the segment, and reports delivery. Owns four skills and a sandbox. Does not originate long-form prose, and says so rather than producing a thin version of it. Cannot see inbox placement or domain reputation, and marks every deliverability check with the tool that verifies it. |
+-| Typefully connection | `.../connections/typefully.ts` | connection | Remote MCP. Deletes always pause for approval; create and edit pause only when the call schedules a post. |
++| Typefully connection | `.../connections/typefully.ts` | connection | Remote MCP. Deletes and creates always pause for approval; edits pause only when the call schedules a post. |
+ | Resend connection | `.../email/connections/resend.ts` | connection | Remote MCP, user-scoped OAuth through Vercel Connect, the same as Notion. The only connection that narrows discovery: `tools.allow` cuts around 85 published tools to the 47 that make up the campaign, list, diagnostic, and read-only-domain surface, leaving out API keys, webhooks, and domain writes entirely. Sends (`send-broadcast`, `send-email`, `send-batch-emails`) and destructive calls always pause for approval, scheduled or not, since Resend splits composing from committing into separate tools. The connector issues only `user` tokens, so sends are attributed to the person who approved them. |
+ | Notion connection | `agent/connections/notion.ts` and one per specialist | connection | Remote MCP, user-scoped OAuth, identical in all six copies. Updates, moves, and view changes pause for approval; page creation is deliberately ungated, since drafting into Notion is the normal flow. |
+ | Asset tools | `lib/vercel-blob/tools.ts`, wired per agent | tools | Upload, list, inspect, download, and delete Blob assets. Deletes pause for approval; the reserved brand-context and preference prefixes are refused. |
+@@ -136,7 +138,8 @@ you
+  └─ eve channel (resolve principal)
+      └─ lead
+          ├─ get_brand_context / get_user_preferences        (Blob read)
+-         ├─ save_brand_context / save_user_preferences      (Blob write, ungated)
++         ├─ save_brand_context                             (Blob write, approval)
++         ├─ save_user_preferences                          (Blob write, ungated)
+          └─ one specialist, briefed in full
+              ├─ get_brand_context                           (Blob read, again: fresh context)
+              ├─ save_brand_context                          (product-marketer: its deliverable)

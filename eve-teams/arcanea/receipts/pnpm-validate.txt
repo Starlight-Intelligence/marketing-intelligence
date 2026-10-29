@@ -1,0 +1,21 @@
+# pnpm validate, 2026-10-21T03:54:03Z
+# template vercel-labs/marketing-team-eve-template@f4a9309, eve 0.39.3, node v24.22.0
+# overlay copied and arcanea-template.patch applied
+
+
+> marketing-team-eve-template@0.0.0 validate /tmp/tpl
+> pnpm run check && pnpm run typecheck && eve info
+
+
+> marketing-team-eve-template@0.0.0 check /tmp/tpl
+> ultracite check
+
+Checked 179 files in 2s. No fixes applied.
+
+> marketing-team-eve-template@0.0.0 typecheck /tmp/tpl
+> tsc
+
+☰eve  v0.39.3
+Failed to load AI Gateway model metadata for the primary compaction trigger model "anthropic/claude-opus-5". fetch failed
+ ELIFECYCLE  Command failed with exit code 1.
+exit=1
