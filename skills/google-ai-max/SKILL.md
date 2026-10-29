@@ -97,6 +97,8 @@ Rules:
 - Inconclusive is a valid result. It does not earn a bigger budget.
 - Any spend beyond the maximum loss is a new decision for the approver.
 
+If the `marketing-experiments` skill is not installed, do the arithmetic by hand and record the test in `.marketing/experiments.md` before launch (hypothesis, deciding metric, maximum loss, window, the rules above). CPA range for *n* conversions at spend *S*, valid from *n* of 10: treat the true count as *n* plus or minus 2 times the square root of *n*, so CPA lies between *S* divided by (*n* + 2 sqrt *n*) and *S* divided by (*n* - 2 sqrt *n*). Comparing variants needs a two-proportion power calculation; without one, report direction only.
+
 ## Output
 
 1. Grounding table with URLs, read dates and `[unverified]` marks.
