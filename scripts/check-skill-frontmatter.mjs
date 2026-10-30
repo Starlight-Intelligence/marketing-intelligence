@@ -35,10 +35,16 @@ export function checkSkills(root = '.') {
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const root = process.argv[2] || '.';
+  const found = findSkillFiles(root).length;
+  // Zero SKILL.md files means the tree is empty or the skills moved: fail instead of passing vacuously.
+  if (found === 0) {
+    console.error(`no SKILL.md files found under ${root}`);
+    process.exit(1);
+  }
   const bad = checkSkills(root);
   if (bad.length) {
     console.error('SKILL.md missing name or description:\n' + bad.join('\n'));
     process.exit(1);
   }
-  console.log(`skills ok (${findSkillFiles(root).length} checked)`);
+  console.log(`skills ok (${found} checked)`);
 }

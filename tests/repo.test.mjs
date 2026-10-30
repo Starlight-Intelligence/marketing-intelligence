@@ -42,3 +42,11 @@ test('pr-gate-poke holds no permissions', () => {
   const poke = read('.github/workflows/pr-gate-poke.yml');
   assert.match(poke, /^permissions:\s*\{\}\s*$/m, 'pr-gate-poke.yml must declare permissions: {}');
 });
+
+test('the required test job runs the search intelligence unit tests from main', () => {
+  const ci = read('.github/workflows/ci.yml');
+  assert.match(ci, /python -m unittest discover -s plugins\/starlight-search-intelligence\/scripts/,
+    'ci.yml test job must run the plugin unit tests');
+  assert.ok(existsSync('plugins/starlight-search-intelligence/scripts/test_growth_core.py'),
+    'plugin unit tests are missing');
+});

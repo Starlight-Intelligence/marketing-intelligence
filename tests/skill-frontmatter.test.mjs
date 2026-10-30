@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { hasNameAndDescription, checkSkills } from '../scripts/check-skill-frontmatter.mjs';
+import { hasNameAndDescription, checkSkills, findSkillFiles } from '../scripts/check-skill-frontmatter.mjs';
 
 const VALID = '---\nname: demo\ndescription: Use when testing the checker.\n---\n\n# Demo\n';
 
@@ -55,7 +55,27 @@ test('CLI exits 0 on a valid tree and 1 naming the bad file on an invalid one', 
   }
 });
 
-test('every SKILL.md in this repo passes', () => {
+test('CLI exits 1 on a tree with no SKILL.md files', () => {
+  const root = mkdtempSync(join(tmpdir(), 'skills-empty-'));
+  try {
+    const script = new URL('../scripts/check-skill-frontmatter.mjs', import.meta.url).pathname;
+    let r = spawnSync(process.execPath, [script, root], { encoding: 'utf8' });
+    assert.equal(r.status, 1, 'an empty tree must fail');
+    assert.match(r.stderr, /no SKILL\.md files found/);
+
+    // Skill directories without a SKILL.md still count as empty.
+    mkdirSync(join(root, 'skills', 'orphan'), { recursive: true });
+    writeFileSync(join(root, 'skills', 'orphan', 'README.md'), '# not a skill\n');
+    r = spawnSync(process.execPath, [script, root], { encoding: 'utf8' });
+    assert.equal(r.status, 1, 'skills directories with no SKILL.md must fail');
+    assert.match(r.stderr, /no SKILL\.md files found/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('every SKILL.md in this repo passes, and there is at least one', () => {
+  assert.ok(findSkillFiles('.').length > 0, 'no SKILL.md files found in this repo');
   assert.deepEqual(checkSkills('.'), []);
 });
 

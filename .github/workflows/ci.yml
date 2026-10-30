@@ -18,9 +18,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Skill frontmatter
         # Every SKILL.md needs a name and a description saying when to use it, or no harness routes to it.
+        # Fails when no SKILL.md exists at all.
         run: node scripts/check-skill-frontmatter.mjs
+      - name: Search intelligence unit tests
+        # The plugin's own validators on main. Its workflow is path-filtered, so it cannot be a required
+        # check; running the unit tests here keeps them under the required `test` check on every PR.
+        # Python 3.12 unittest exits 5 when it finds no tests, so an emptied suite fails too.
+        run: python -m unittest discover -s plugins/starlight-search-intelligence/scripts -p 'test_*.py' -v
       - name: Required files
         # Fails on an empty or gutted tree instead of passing vacuously.
         shell: bash
