@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Skill frontmatter
+        # Every SKILL.md needs a name and a description saying when to use it, or no harness routes to it.
+        # Fails when no SKILL.md exists at all.
+        run: node scripts/check-skill-frontmatter.mjs
+      - name: Search intelligence unit tests
+        # The plugin's own validators on main. Its workflow is path-filtered, so it cannot be a required
+        # check; running the unit tests here keeps them under the required `test` check on every PR.
+        # Python 3.12 unittest exits 5 when it finds no tests, so an emptied suite fails too.
+        run: python -m unittest discover -s plugins/starlight-search-intelligence/scripts -p 'test_*.py' -v
+      - name: Required files
+        # Fails on an empty or gutted tree instead of passing vacuously.
+        shell: bash
+        run: |
+          missing=0
+          for f in README.md scripts/check-skill-frontmatter.mjs .github/workflows/ci.yml .github/workflows/pr-gate.yml .github/workflows/pr-gate-poke.yml; do
+            if [ ! -s "$f" ]; then echo "::error::required file missing or empty: $f"; missing=1; fi
+          done
+          exit $missing
+      - name: Tests
+        # The required `test` check must run at least one passing test: no test files, or test
+        # files that define no tests, is a failure, not a pass.
+        shell: bash
+        run: |
+          mapfile -t files < <(git ls-files "*.test.mjs" "*.test.js")
+          if [ ${#files[@]} -eq 0 ]; then echo "::error::no test files found (*.test.mjs, *.test.js)"; exit 1; fi
+          node --test --test-reporter=tap "${files[@]}" | tee "$RUNNER_TEMP/tap.txt"
+          # node --test reports a file that defines no tests as one passing test named after the file.
+          empty=$(sed -nE 's/^(not )?ok [0-9]+ - //p' "$RUNNER_TEMP/tap.txt" | grep -xF -f <(printf '%s\n' "${files[@]}") || true)
+          if [ -n "$empty" ]; then echo "::error::test files that define no tests: $empty"; exit 1; fi
+          real=$(grep -E '^ok [0-9]+ - ' "$RUNNER_TEMP/tap.txt" | grep -vcE '# (SKIP|TODO)' || true)
+          if [ "${real:-0}" -lt 1 ]; then echo "::error::no tests passed"; exit 1; fi
+          echo "$real tests passed"
