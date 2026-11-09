@@ -1,0 +1,15 @@
+{
+  "name": "marketing-intelligence",
+  "owner": {
+    "name": "Starlight Intelligence",
+    "url": "https://github.com/Starlight-Intelligence"
+  },
+  "description": "Marketing playbooks and an agent marketing team from Starlight Intelligence.",
+  "plugins": [
+    {
+      "name": "marketing-team",
+      "source": "./",
+      "description": "An eleven-seat marketing team with memory, expiring platform facts, a claims check and a hand-off to a second-provider critic. Stages work for human approval."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "about": "Applies to every surface. Words and patterns that read as machine-made or inflated. A clean lint is a floor, not a verdict.",
+  "banned": [
+    "seamless", "seamlessly", "unleash", "unlock the power", "elevate", "delve", "game-changer", "game changer",
+    "supercharge", "revolutionary", "revolutionize", "cutting-edge", "next-gen", "state-of-the-art", "robust",
+    "synergy", "leverage", "empower", "harness the power", "in today's fast-paced", "in the ever-evolving",
+    "it's important to note", "look no further", "take it to the next level", "a testament to", "navigate the complexities",
+    "embark on a journey", "tapestry", "landscape of", "realm of", "dive deep", "deep dive", "thought leader"
+  ],
+  "patterns": [
+    { "name": "not-x-but-y", "regex": "\\b(it'?s|this is|isn'?t|wasn'?t) not (just |only |merely )?[^.,;]{1,60}[,;]? (it'?s |but )", "why": "Staged contrast reads as generated." },
+    { "name": "em-dash", "regex": "—", "why": "Allowed only if the brand's own writing uses it; set via the brand list." },
+    { "name": "rhetorical-opener", "regex": "^\\s*(ever wondered|imagine (a world|if)|what if i told you|let'?s be honest|here'?s the thing)", "why": "Stock opener." },
+    { "name": "stacked-hedge", "regex": "\\b(may|might|could) (potentially|possibly|perhaps)\\b", "why": "Hedge on hedge." },
+    { "name": "exclamation-run", "regex": "!{2,}", "why": "Hype punctuation." },
+    { "name": "emoji-bullet", "regex": "^\\s*[\\u{1F300}-\\u{1FAFF}\\u2705\\u2728\\u{1F680}]\\s", "why": "Emoji used as list markers." }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "about": "Surface list for x. Extend per brand with --brand.",
+  "banned": [
+    "excited to announce",
+    "unpopular opinion",
+    "hot take",
+    "let that sink in",
+    "read that again",
+    "rt if you agree",
+    "like and retweet",
+    "follow me for more",
+    "a thread",
+    "🧵"
+  ],
+  "patterns": [
+    {
+      "name": "hashtag-stack",
+      "regex": "(#\\w+\\s*){3,}",
+      "why": "More than two hashtags reads as spam on X."
+    }
+  ]
+}

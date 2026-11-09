@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: marketing-team-5
+tags: [marketing-team]
+context:
+  scaffold_script: fixture.sh

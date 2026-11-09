@@ -1,0 +1,35 @@
+{
+  "name": "marketing-team",
+  "displayName": "Starlight Marketing Team",
+  "version": "0.2.0",
+  "description": "An eleven-seat marketing team that plans, researches, drafts, claims-checks and learns from results against a memory kept in your repo. Independent critique runs through a second provider's CLI when you have one installed; otherwise it is recorded as missing. People publish, send, spend and set prices.",
+  "author": {
+    "name": "Starlight Intelligence",
+    "url": "https://github.com/Starlight-Intelligence"
+  },
+  "repository": "https://github.com/Starlight-Intelligence/marketing-intelligence",
+  "keywords": [
+    "marketing",
+    "marketing-team",
+    "ai-cmo",
+    "launch",
+    "chatgpt-ads",
+    "ai-search-visibility",
+    "content",
+    "social",
+    "cro"
+  ],
+  "agents": [
+    "./team/agents/ai-visibility.md",
+    "./team/agents/cmo.md",
+    "./team/agents/content-marketer.md",
+    "./team/agents/conversion-engineer.md",
+    "./team/agents/critic.md",
+    "./team/agents/market-intel.md",
+    "./team/agents/performance-analyst.md",
+    "./team/agents/performance-marketer.md",
+    "./team/agents/product-marketer.md",
+    "./team/agents/social-coordinator.md",
+    "./team/agents/voice-editor.md"
+  ]
+}

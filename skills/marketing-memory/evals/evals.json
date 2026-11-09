@@ -1,0 +1,28 @@
+{
+  "skill_name": "marketing-memory",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our ChatGPT ads test (id 2026-W44-chatgpt-ads-1, kill rule 'spend >= 1000 with CPA > 236') spent $1,140 for 4 conversions, a CPA of $285. The team thinks it was close and wants to change the kill threshold to $300 and keep going.",
+      "expected_output": "Applies the pre-registered kill rule as written: $1,140 spend is over $1,000 and $285 CPA is over $236, so the test is killed. Refuses to edit the rule on the existing test, explains that a changed rule means a new test that needs its own approval, and records result, decision and a one-sentence lesson with the counts (4 conversions, $1,140).",
+      "expectations": [
+        "Applies the original kill rule and records the decision as kill",
+        "Does not edit the rules of the existing test",
+        "Says a new threshold requires a new test with its own approval",
+        "Writes a lesson that states 4 conversions and $1,140 spend"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "The founder rejected three posts this month: 'too salesy up top', 'opens with the product again', 'lead with the problem'. Log these and tell me what to change.",
+      "expected_output": "Appends three taste.jsonl lines with the founder's reasons, notices the shared pattern (open with the problem, not the product), and proposes adding it to the brand pack for the founder to decide rather than changing the brand pack itself.",
+      "expectations": [
+        "Appends one taste.jsonl line per rejection with the founder's own reason",
+        "Identifies the shared pattern",
+        "Proposes the brand pack change for the founder to approve instead of making it"
+      ],
+      "files": []
+    }
+  ]
+}

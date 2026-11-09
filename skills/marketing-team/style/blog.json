@@ -1,0 +1,11 @@
+{
+  "about": "Surface list for blog. Extend per brand with --brand.",
+  "banned": [
+    "in conclusion",
+    "in this article we will",
+    "without further ado",
+    "at the end of the day",
+    "needless to say"
+  ],
+  "patterns": []
+}
