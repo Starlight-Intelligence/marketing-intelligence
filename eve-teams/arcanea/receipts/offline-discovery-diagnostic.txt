@@ -1,0 +1,75 @@
+# Offline discovery diagnostic, 2026-10-21T03:53:01Z
+
+NOT THE PROOF. The proof runs (pnpm-validate.txt, eve-info.txt) stop at eve's AI Gateway model
+catalog fetch, because this environment's network policy denies ai-gateway.vercel.sh.
+
+To check discovery anyway, a throwaway copy of the patched template (/tmp/tpl-diag) had
+'modelContextWindowTokens: 200_000' inserted into each of the 13 agent.ts files, which makes eve skip the
+catalog lookup. That number is a placeholder, not a claim about any model. Nothing from that copy
+is in the overlay.
+
+## npx eve info
+
+☰eve  v0.39.3
+eve Info
+========
+Resolved application paths and the active message contract.
+
+Application
+App Root      /tmp/tpl-diag
+Agent Root    /tmp/tpl-diag/agent
+Layout        nested
+Compile       ready
+Diagnostics   0 errors, 0 warnings
+Instructions  instructions.md (system)
+Skills        0 skills
+Tools         8 tools
+Subagents     12 subagents
+Schedules     0 schedules
+
+Artifacts
+Compiled Manifest   /tmp/tpl-diag/.eve/compile/compiled-agent-manifest.json
+Discovery Manifest  /tmp/tpl-diag/.eve/discovery/agent-discovery-manifest.json
+Diagnostics         /tmp/tpl-diag/.eve/discovery/diagnostics.json
+Module Map          /tmp/tpl-diag/.eve/compile/module-map.mjs
+Metadata            /tmp/tpl-diag/.eve/compile/compile-metadata.json
+Workflow Build      <eve package>
+Output              /tmp/tpl-diag/.output
+
+Instructions
+Instructions  instructions.md (system)
+
+Messaging
+Workflow ID  workflow//eve//workflowEntry
+Source Dir   <eve package>
+Create       POST /eve/v1/session
+Messages     POST /eve/v1/session/:sessionId
+Stream       GET /eve/v1/session/:sessionId/stream
+
+## .eve/discovery/diagnostics.json
+
+{
+  "diagnostics": [],
+  "kind": "eve-discovery-diagnostics",
+  "summary": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "version": 1
+}
+
+## Discovered surface per agent (from agent-discovery-manifest.json)
+
+root tools: ['clear_user_preferences', 'get_brand_context', 'get_user_preferences', 'open_factory_ticket', 'read_artifact', 'read_canon', 'save_brand_context', 'save_user_preferences']
+subagents/brand-architect | tools: ['bash', 'get_brand_context', 'open_factory_ticket', 'read_artifact', 'save_artifact'] | skills: ['identity-system', 'writing-quality'] | sandbox: True
+subagents/canon-keeper | tools: ['bash', 'get_brand_context', 'read_artifact', 'read_canon', 'save_artifact'] | skills: ['canon-check'] | sandbox: True
+subagents/character-designer | tools: ['bash', 'get_brand_context', 'open_factory_ticket', 'read_artifact', 'read_canon', 'save_artifact'] | skills: ['character-sheet'] | sandbox: True
+subagents/content-marketer | tools: ['bash', 'delete_asset', 'download_asset', 'get_asset_info', 'get_brand_context', 'lint_against_style', 'list_assets', 'read_artifact', 'save_artifact', 'upload_asset'] | skills: ['blog-style', 'content-editing', 'content-planning', 'writing-quality'] | sandbox: True
+subagents/email | tools: ['bash', 'build_tracked_link', 'delete_asset', 'download_asset', 'get_asset_info', 'get_brand_context', 'lint_against_style', 'list_assets', 'read_artifact', 'save_artifact', 'upload_asset'] | skills: ['deliverability', 'email-adaptation', 'email-style', 'resend-build', 'writing-quality'] | sandbox: True
+subagents/outlier-scout | tools: ['bash', 'get_brand_context', 'read_artifact', 'save_artifact'] | skills: ['outlier-method', 'writing-quality'] | sandbox: True
+subagents/performance-analyst | tools: ['bash', 'get_brand_context', 'read_artifact', 'save_artifact'] | skills: ['weekly-read', 'writing-quality'] | sandbox: True
+subagents/product-marketer | tools: ['bash', 'delete_asset', 'download_asset', 'get_asset_info', 'get_brand_context', 'list_assets', 'read_artifact', 'save_artifact', 'save_brand_context', 'upload_asset'] | skills: ['brand-context', 'customer-research', 'messaging', 'positioning', 'writing-quality'] | sandbox: True
+subagents/seo | tools: ['bash', 'delete_asset', 'download_asset', 'get_asset_info', 'get_brand_context', 'list_assets', 'read_artifact', 'save_artifact', 'upload_asset', 'validate_schema'] | skills: ['programmatic-seo', 'schema', 'seo-audit', 'site-architecture', 'writing-quality'] | sandbox: True
+subagents/social-media-coordinator | tools: ['bash', 'build_tracked_link', 'delete_asset', 'download_asset', 'get_asset_info', 'get_brand_context', 'lint_against_style', 'list_assets', 'post_analytics_report', 'read_artifact', 'save_artifact', 'upload_asset'] | skills: ['bluesky-style', 'linkedin-style', 'mastodon-style', 'threads-style', 'writing-quality', 'x-style'] | sandbox: True
+subagents/visual-director | tools: ['bash', 'get_brand_context', 'open_factory_ticket', 'read_artifact', 'read_canon', 'save_artifact'] | skills: ['render-brief', 'visual-gate'] | sandbox: True
+subagents/voice-editor | tools: ['bash', 'get_brand_context', 'lint_against_style', 'read_artifact', 'read_canon', 'save_artifact'] | skills: ['arcanea-style', 'outlier-comparison', 'writing-quality'] | sandbox: True
